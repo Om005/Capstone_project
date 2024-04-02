@@ -275,11 +275,10 @@ void reading(ifstream &file)
             while (getline(file, s))
             {
                 Candidate c;
-                string delimiter = ",";
                 size_t ind = 0;
                 string token;
                 int no = -1;
-                while (no <= 11 && ((ind = s.find(delimiter)) != string::npos))
+                while (no <= 11 && ((ind = s.find(",")) != string::npos))
                 {
                     token = s.substr(0, ind);
                     if (no == -1 && (s[0] < 48 || s[0] > 57))
@@ -390,7 +389,7 @@ void reading(ifstream &file)
                             }
                         }
                     }
-                    s.erase(0, ind + delimiter.length());
+                    s.erase(0, ind + 1);
                     no++;
                 }
                 switch (Round_no)
@@ -522,11 +521,10 @@ void reading(ifstream &file)
     while (getline(file, s))
     {
         Candidate c;
-        string delimiter = ",";
         size_t ind = 0;
         string token;
         int no = -1;
-        while (no <= 11 && ((ind = s.find(delimiter)) != string::npos))
+        while (no <= 11 && ((ind = s.find(",")) != string::npos))
         {
             token = s.substr(0, ind);
             if (no == -1 && (s[0] < 48 || s[0] > 57))
@@ -638,7 +636,7 @@ void reading(ifstream &file)
                     }
                 }
             }
-            s.erase(0, ind + delimiter.length());
+            s.erase(0, ind + 1);
             no++;
         }
         switch (Round_no)
