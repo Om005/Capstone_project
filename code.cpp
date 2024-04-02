@@ -109,7 +109,11 @@ public:
     }
 };
 
-    map<string, Candidate> mp;
+map<string, Candidate> mpround1;
+map<string, Candidate> mpround2;
+map<string, Candidate> mpround3;
+map<string, Candidate> mpround4;
+map<string, Candidate> mpround5;
 class Company
 {
 public:
@@ -223,7 +227,6 @@ void reading(ifstream &file)
                 break;
             case 2:
                 it.r2.EndDate = endDate;
-                cout << it.r2.EndDate;
                 break;
             case 3:
                 it.r3.EndDate = endDate;
@@ -395,23 +398,23 @@ void reading(ifstream &file)
                 switch (Round_no)
                 {
                 case 1:
-                    mp[c.info[5]] = c;
+                    mpround1[c.info[5]+"-"+it.cname] = c;
                     it.r1.v.emplace_back(c);
                     break;
                 case 2:
-                    mp[c.info[5]] = c;
+                    mpround2[c.info[5]+"-"+it.cname] = c;
                     it.r2.v.emplace_back(c);
                     break;
                 case 3:
-                    mp[c.info[5]] = c;
+                    mpround3[c.info[5]+"-"+it.cname] = c;
                     it.r3.v.emplace_back(c);
                     break;
                 case 4:
-                    mp[c.info[5]] = c;
+                    mpround4[c.info[5]+"-"+it.cname] = c;
                     it.r4.v.emplace_back(c);
                     break;
                 case 5:
-                    mp[c.info[5]] = c;
+                    mpround5[c.info[5]+"-"+it.cname] = c;
                     it.r5.v.emplace_back(c);
                     break;
                 }
@@ -642,23 +645,23 @@ void reading(ifstream &file)
         switch (Round_no)
         {
         case 1:
-            mp[c.info[5]] = c;
+            mpround1[c.info[5]+"-"+newcompany.cname] = c;
             newcompany.r1.v.emplace_back(c);
             break;
         case 2:
-            mp[c.info[5]] = c;
+            mpround2[c.info[5]+"-"+newcompany.cname] = c;
             newcompany.r2.v.emplace_back(c);
             break;
         case 3:
-            mp[c.info[5]] = c;
+            mpround3[c.info[5]+"-"+newcompany.cname] = c;
             newcompany.r3.v.emplace_back(c);
             break;
         case 4:
-            mp[c.info[5]] = c;
+            mpround4[c.info[5]+"-"+newcompany.cname] = c;
             newcompany.r4.v.emplace_back(c);
             break;
         case 5:
-            mp[c.info[5]] = c;
+            mpround5[c.info[5]+"-"+newcompany.cname] = c;
             newcompany.r5.v.emplace_back(c);
             break;
         }
@@ -666,18 +669,46 @@ void reading(ifstream &file)
 }
 void GetData(string s){
                         cout << "Details: " << endl;
-                        cout << "Student name: " <<mp[s].info[0] << endl;
-                        cout << "Interview date: " <<mp[s].info[1] << endl;
-                        cout << "Interview status: " <<mp[s].info[2] << endl;
-                        cout << "Interview Start Time: " << mp[s].info[3]<< endl;
-                        cout << "Interview End Time: " <<mp[s].info[4] << endl;
-                        cout << "Student ID: " <<mp[s].info[5] << endl;
-                        cout << "Email: " <<mp[s].info[6] << endl;
-                        cout << "Program: " << mp[s].info[7]<< endl;
-                        cout << "Contact No.: " << mp[s].info[8]<< endl;
-                        cout << "WhatsApp No.: " << mp[s].info[9]<< endl;
-                        cout << "Alternate No.: " << mp[s].info[10] << endl;
-                        cout << "Skype ID: " << mp[s].info[11] << endl;
+                        cout << "Student name: " <<mpround1[s].info[0] << endl;
+                        cout << "Interview date: " <<mpround1[s].info[1] << endl;
+                        cout << "Interview status: " <<mpround1[s].info[2] << endl;
+                        cout << "Interview Start Time: " << mpround1[s].info[3]<< endl;
+                        cout << "Interview End Time: " <<mpround1[s].info[4] << endl;
+                        cout << "Student ID: " <<mpround1[s].info[5] << endl;
+                        cout << "Email: " <<mpround1[s].info[6] << endl;
+                        cout << "Program: " << mpround1[s].info[7]<< endl;
+                        cout << "Contact No.: " << mpround1[s].info[8]<< endl;
+                        cout << "WhatsApp No.: " << mpround1[s].info[9]<< endl;
+                        cout << "Alternate No.: " << mpround1[s].info[10] << endl;
+                        cout << "Skype ID: " << mpround1[s].info[11] << endl;
+}
+
+void Selection_data_of_candidate(string s){
+    if(mpround1[s].info[0]==""){
+        GetData(s);
+        cout << "The name of the person with provided ID number is not found in the list of the candidates\n";
+        return;
+    }
+    if(mpround5[s].info[0]!=""){
+        cout << "This candidates selected for the placement.\n";
+        return;
+    }
+    if(mpround4[s].info[0]!=""){
+        cout << "This candidate is eliminated in HR round.\n";
+        return;
+    }
+    if(mpround3[s].info[0]!=""){
+        cout << "This candidate is eliminated in 3rd round.\n";
+        return;
+    }
+    if(mpround2[s].info[0]!=""){
+        cout << "This candidate is eliminated in 2nd round.\n";
+        return;
+    }
+    if(mpround1[s].info[0]!=""){
+        cout << "This candidate is eliminated in 1st round.\n";
+        return;
+    }
 }
 int main()
 {
@@ -702,6 +733,7 @@ int main()
     //     cout << it.r2.EndDate<<endl;
     // }
 
-    GetData("202001052");
+    // if(mpround1["234235345-[asdhflhds]"].info[0]==""){cout << "Yes bro!!!!";}
+    Selection_data_of_candidate("202001008-[Microsoft]");
     return 0;
 }
