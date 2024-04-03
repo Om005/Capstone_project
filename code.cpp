@@ -124,45 +124,54 @@ public:
     HR r4;
     Final r5;
 
-    int TotalNoOfCandidates(int n){
-        switch(n){
-            case 1:
-                return r1.v.size();
-            case 2:
-                return r2.v.size();
-            case 3:
-                return r3.v.size();
-            case 4:
-                return r4.v.size();
-            case 5:
-                return r5.v.size();
+    int TotalNoOfCandidates(int n)
+    {
+        switch (n)
+        {
+        case 1:
+            return r1.v.size();
+        case 2:
+            return r2.v.size();
+        case 3:
+            return r3.v.size();
+        case 4:
+            return r4.v.size();
+        case 5:
+            return r5.v.size();
         }
     }
-    int Selected_From_Round(int n){
-        switch(n){
-            case 1:
-                return r2.v.size();
-            case 2:
-                return r3.v.size();
-            case 3:
-                return r4.v.size();
-            case 4:
-                return r5.v.size();
+    int Selected_From_Round(int n)
+    {
+        switch (n)
+        {
+        case 1:
+            return r2.v.size();
+        case 2:
+            return r3.v.size();
+        case 3:
+            return r4.v.size();
+        case 4:
+            return r5.v.size();
         }
     }
-    double successRate(int n){
-        switch(n){
-            case 1:
+    double successRate(int n)
+    {
+        switch (n)
+        {
+        case 1:
             return r2.v.size() * 100.0 / r1.v.size();
-            case 2:
+        case 2:
             return r3.v.size() * 100.0 / r2.v.size();
-            case 3:
+        case 3:
             return r4.v.size() * 100.0 / r3.v.size();
-            case 4:
+        case 4:
             return r5.v.size() * 100.0 / r4.v.size();
         }
     }
-
+    double TotalSuccessRate()
+    {
+        return r5.v.size() * 100.0 / r1.v.size();
+    }
 };
 vector<Company> total;
 void reading(ifstream &file)
@@ -398,34 +407,32 @@ void reading(ifstream &file)
                 switch (Round_no)
                 {
                 case 1:
-                    mpround1[c.info[5]+"-"+it.cname] = c;
+                    mpround1[c.info[5] + "-" + it.cname] = c;
                     it.r1.v.emplace_back(c);
                     break;
                 case 2:
-                    mpround2[c.info[5]+"-"+it.cname] = c;
+                    mpround2[c.info[5] + "-" + it.cname] = c;
                     it.r2.v.emplace_back(c);
                     break;
                 case 3:
-                    mpround3[c.info[5]+"-"+it.cname] = c;
+                    mpround3[c.info[5] + "-" + it.cname] = c;
                     it.r3.v.emplace_back(c);
                     break;
                 case 4:
-                    mpround4[c.info[5]+"-"+it.cname] = c;
+                    mpround4[c.info[5] + "-" + it.cname] = c;
                     it.r4.v.emplace_back(c);
                     break;
                 case 5:
-                    mpround5[c.info[5]+"-"+it.cname] = c;
+                    mpround5[c.info[5] + "-" + it.cname] = c;
                     it.r5.v.emplace_back(c);
                     break;
                 }
             }
-            
         }
     }
     Company newcompany;
     newcompany.cname = tempp;
-    
-    
+
     file.seekg(0);
     for (int i = 0; i < 2; i++)
     {
@@ -452,8 +459,7 @@ void reading(ifstream &file)
         newcompany.r5.StartDate = startDate;
         break;
     }
-    
-    
+
     file.seekg(0);
     for (int i = 0; i < 3; i++)
     {
@@ -480,8 +486,7 @@ void reading(ifstream &file)
         newcompany.r5.EndDate = endDate;
         break;
     }
-    
-    
+
     file.seekg(0);
     for (int i = 0; i < 4; i++)
     {
@@ -519,8 +524,7 @@ void reading(ifstream &file)
             s.erase(0, s.find(",") + 1);
         }
     }
-    
-    
+
     while (getline(file, s))
     {
         Candidate c;
@@ -645,77 +649,106 @@ void reading(ifstream &file)
         switch (Round_no)
         {
         case 1:
-            mpround1[c.info[5]+"-"+newcompany.cname] = c;
+            mpround1[c.info[5] + "-" + newcompany.cname] = c;
             newcompany.r1.v.emplace_back(c);
             break;
         case 2:
-            mpround2[c.info[5]+"-"+newcompany.cname] = c;
+            mpround2[c.info[5] + "-" + newcompany.cname] = c;
             newcompany.r2.v.emplace_back(c);
             break;
         case 3:
-            mpround3[c.info[5]+"-"+newcompany.cname] = c;
+            mpround3[c.info[5] + "-" + newcompany.cname] = c;
             newcompany.r3.v.emplace_back(c);
             break;
         case 4:
-            mpround4[c.info[5]+"-"+newcompany.cname] = c;
+            mpround4[c.info[5] + "-" + newcompany.cname] = c;
             newcompany.r4.v.emplace_back(c);
             break;
         case 5:
-            mpround5[c.info[5]+"-"+newcompany.cname] = c;
+            mpround5[c.info[5] + "-" + newcompany.cname] = c;
             newcompany.r5.v.emplace_back(c);
             break;
         }
     }
 }
-void GetData(string s){
-                        cout << "Details: " << endl;
-                        cout << "Student name: " <<mpround1[s].info[0] << endl;
-                        cout << "Interview date: " <<mpround1[s].info[1] << endl;
-                        cout << "Interview status: " <<mpround1[s].info[2] << endl;
-                        cout << "Interview Start Time: " << mpround1[s].info[3]<< endl;
-                        cout << "Interview End Time: " <<mpround1[s].info[4] << endl;
-                        cout << "Student ID: " <<mpround1[s].info[5] << endl;
-                        cout << "Email: " <<mpround1[s].info[6] << endl;
-                        cout << "Program: " << mpround1[s].info[7]<< endl;
-                        cout << "Contact No.: " << mpround1[s].info[8]<< endl;
-                        cout << "WhatsApp No.: " << mpround1[s].info[9]<< endl;
-                        cout << "Alternate No.: " << mpround1[s].info[10] << endl;
-                        cout << "Skype ID: " << mpround1[s].info[11] << endl;
+void GetData(string s)
+{
+    cout << "Details: " << endl;
+    cout << "Student name: " << mpround1[s].info[0] << endl;
+    cout << "Interview date: " << mpround1[s].info[1] << endl;
+    cout << "Interview status: " << mpround1[s].info[2] << endl;
+    cout << "Interview Start Time: " << mpround1[s].info[3] << endl;
+    cout << "Interview End Time: " << mpround1[s].info[4] << endl;
+    cout << "Student ID: " << mpround1[s].info[5] << endl;
+    cout << "Email: " << mpround1[s].info[6] << endl;
+    cout << "Program: " << mpround1[s].info[7] << endl;
+    cout << "Contact No.: " << mpround1[s].info[8] << endl;
+    cout << "WhatsApp No.: " << mpround1[s].info[9] << endl;
+    cout << "Alternate No.: " << mpround1[s].info[10] << endl;
+    cout << "Skype ID: " << mpround1[s].info[11] << endl;
 }
 
-void Selection_data_of_candidate(string s){
-    if(mpround1[s].info[0]==""){
+void Selection_data_of_candidate(string s)
+{
+    if (mpround1[s].info[0] == "")
+    {
         GetData(s);
         cout << "The name of the person with provided ID number is not found in the list of the candidates\n";
         return;
     }
-    if(mpround5[s].info[0]!=""){
+    if (mpround5[s].info[0] != "")
+    {
         cout << "This candidates selected for the placement.\n";
         return;
     }
-    if(mpround4[s].info[0]!=""){
+    if (mpround4[s].info[0] != "")
+    {
         cout << "This candidate is eliminated in HR round.\n";
         return;
     }
-    if(mpround3[s].info[0]!=""){
+    if (mpround3[s].info[0] != "")
+    {
         cout << "This candidate is eliminated in 3rd round.\n";
         return;
     }
-    if(mpround2[s].info[0]!=""){
+    if (mpround2[s].info[0] != "")
+    {
         cout << "This candidate is eliminated in 2nd round.\n";
         return;
     }
-    if(mpround1[s].info[0]!=""){
+    if (mpround1[s].info[0] != "")
+    {
         cout << "This candidate is eliminated in 1st round.\n";
         return;
     }
 }
+
+void PlacementChances()
+{
+    vector<pair<double, string>> v;
+    for (auto it : total)
+    {
+        v.emplace_back(it.TotalSuccessRate(), it.cname);
+    }
+    sort(v.rbegin(), v.rend());
+    for (auto it : v)
+    {
+        cout << it.first;
+        cout << it.second << endl;
+    }
+}
+
 int main()
 {
     ifstream file1("Finalround1.csv");
     reading(file1);
-    ifstream file2("Finalround2.csv");
+    ifstream file2("Finalselection.csv");
     reading(file2);
+
+    ifstream google("Googler1.csv");
+    reading(google);
+    ifstream googlefinal("Googlefinal.csv");
+    reading(googlefinal);
     // for(auto it: total){
     //     cout << it.cname;
     //     it.r1.display();
@@ -735,5 +768,7 @@ int main()
 
     // if(mpround1["234235345-[asdhflhds]"].info[0]==""){cout << "Yes bro!!!!";}
     Selection_data_of_candidate("202001008-[Microsoft]");
+
+    PlacementChances();
     return 0;
 }
