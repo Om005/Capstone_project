@@ -740,6 +740,70 @@ class Functionality{
     }
     }
 
+    // Function to get average time of interview of particular company's round
+    static double avgtime(string s, int rno){
+        string temp;
+        long long minutes=0;
+        for(auto it: total){
+            if(it.cname==s){
+                switch(rno){
+                    case 1:
+                        for(auto pt: it.r1.v){
+                            temp = pt.info[4].substr(0, pt.info[4].find(":"));
+                            minutes += (stoi(temp)*60);
+                            temp = pt.info[4].substr(pt.info[4].find(":")+1, pt.info[4].find(","));
+                            minutes += stoi(temp);
+
+                            temp = pt.info[3].substr(0, pt.info[3].find(":"));
+                            minutes -= (stoi(temp)*60);
+                            temp = pt.info[3].substr(pt.info[3].find(":")+1, pt.info[3].find(","));
+                            minutes -= stoi(temp);
+                        }
+                        return float(minutes)/it.TotalNoOfCandidates(1);
+                    case 2:
+                        for(auto pt: it.r2.v){
+                            temp = pt.info[4].substr(0, pt.info[4].find(":"));
+                            minutes += (stoi(temp)*60);
+                            temp = pt.info[4].substr(pt.info[4].find(":")+1, pt.info[4].find(","));
+                            minutes += stoi(temp);
+
+                            temp = pt.info[3].substr(0, pt.info[3].find(":"));
+                            minutes -= (stoi(temp)*60);
+                            temp = pt.info[3].substr(pt.info[3].find(":")+1, pt.info[3].find(","));
+                            minutes -= stoi(temp);
+                        }
+                        return float(minutes)/it.TotalNoOfCandidates(2);
+                    case 3:
+                        for(auto pt: it.r3.v){
+                            temp = pt.info[4].substr(0, pt.info[4].find(":"));
+                            minutes += (stoi(temp)*60);
+                            temp = pt.info[4].substr(pt.info[4].find(":")+1, pt.info[4].find(","));
+                            minutes += stoi(temp);
+
+                            temp = pt.info[3].substr(0, pt.info[3].find(":"));
+                            minutes -= (stoi(temp)*60);
+                            temp = pt.info[3].substr(pt.info[3].find(":")+1, pt.info[3].find(","));
+                            minutes -= stoi(temp);
+                        }
+                        return float(minutes)/it.TotalNoOfCandidates(3);
+                    case 4:
+                        for(auto pt: it.r4.v){
+                            temp = pt.info[4].substr(0, pt.info[4].find(":"));
+                            minutes += (stoi(temp)*60);
+                            temp = pt.info[4].substr(pt.info[4].find(":")+1, pt.info[4].find(","));
+                            minutes += stoi(temp);
+
+                            temp = pt.info[3].substr(0, pt.info[3].find(":"));
+                            minutes -= (stoi(temp)*60);
+                            temp = pt.info[3].substr(pt.info[3].find(":")+1, pt.info[3].find(","));
+                            minutes -= stoi(temp);
+                        }
+                        return float(minutes)/it.TotalNoOfCandidates(4);
+                }
+            }
+        }
+    }
+
     // Function to calculate maximum time of interview of particular company's round.
     static int maxtime(string s, int rno){
         int minutes = 0;
