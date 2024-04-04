@@ -1,19 +1,32 @@
-#include <bits/stdc++.h>
+#include <bits/stdc++.h> // Include necessary header file
 using namespace std;
 
-class Branches
+
+// Class to store information about a candidate
+class Candidate
+{
+public:
+    string info[12];
+};
+
+// Class to store information about the number of candidates selected from different branches
+// and start and end date of the round, CR and candidate information
+class Round_info
 {
 public:
     int BTechICT{0};
     int BTechMNC{0};
     int BTechEVD{0};
     int MTechICT{0};
+    int completed{0};
+    int waiting{0};
+    int inprog{0};
+    string EndDate;
+    string StartDate;
+    vector<Candidate> v;  // Vector to store candidate information
+    vector<string> CR; // Vector to store CR names with number
 };
-class Candidate
-{
-public:
-    string info[12];
-};
+// Function to determine the round number based on the input file
 int Round_data(ifstream &file)
 {
     string s;
@@ -34,29 +47,19 @@ int Round_data(ifstream &file)
         }
     }
 }
-class Final : public Branches
+
+// Class to store information about the final round of interviews
+class Final : public Round_info{};
+
+// Class to store information about the HR round of interviews
+class HR : public Round_info{};
+
+// Class to store information about the 3rd round of interviews
+class Round3 : public Round_info
 {
 public:
-    string EndDate;
-    string StartDate;
-    vector<Candidate> v;
-    vector<string> CR;
-};
-class HR : public Branches
-{
-public:
-    string EndDate;
-    string StartDate;
-    vector<Candidate> v;
-    vector<string> CR;
-};
-class Round3 : public Branches
-{
-public:
-    string EndDate;
-    string StartDate;
-    vector<Candidate> v;
-    vector<string> CR;
+
+    // Function to display candidate information
     void display()
     {
         for (auto it : v)
@@ -70,32 +73,12 @@ public:
     }
 };
 
-class Round2 : public Branches
+// Class to store information about the 2nd round of interviews
+class Round2 : public Round_info
 {
 public:
-    string EndDate;
-    string StartDate;
-    vector<Candidate> v;
-    vector<string> CR;
-    void display()
-    {
-        for (auto it : v)
-        {
-            for (int i = 0; i < 12; i++)
-            {
-                cout << it.info[i] << " ";
-            }
-            cout << endl;
-        }
-    }
-};
-class Round1 : public Branches
-{
-public:
-    string EndDate;
-    string StartDate;
-    vector<Candidate> v;
-    vector<string> CR;
+
+    // Function to display candidate information
     void display()
     {
         for (auto it : v)
@@ -109,75 +92,97 @@ public:
     }
 };
 
-map<string, Candidate> mpround1;
-map<string, Candidate> mpround2;
-map<string, Candidate> mpround3;
-map<string, Candidate> mpround4;
-map<string, Candidate> mpround5;
+// Class to store information about the 1st round of interviews
+class Round1 : public Round_info
+{
+public:
+
+    // Function to display candidate information
+    void display()
+    {
+        for (auto it : v)
+        {
+            for (int i = 0; i < 12; i++)
+            {
+                cout << it.info[i] << " ";
+            }
+            cout << endl;
+        }
+    }
+};
+
+// Maps to store candidate information for different rounds
+unordered_map<string, Candidate> mpround1;
+unordered_map<string, Candidate> mpround2;
+unordered_map<string, Candidate> mpround3;
+unordered_map<string, Candidate> mpround4;
+unordered_map<string, Candidate> mpround5;
+
+// Class to store company-wise interview data
 class Company
 {
 public:
-    string cname;
-    Round1 r1;
-    Round2 r2;
-    Round3 r3;
-    HR r4;
-    Final r5;
+    string cname; // Company name
+    Round1 r1; // Round 1 data
+    Round2 r2; // Round 2 data
+    Round3 r3; // Round 3 data
+    HR r4; // HR round data
+    Final r5; // Final round data
 
-    int TotalNoOfCandidates(int n)
-    {
-        switch (n)
-        {
-        case 1:
-            return r1.v.size();
-        case 2:
-            return r2.v.size();
-        case 3:
-            return r3.v.size();
-        case 4:
-            return r4.v.size();
-        case 5:
-            return r5.v.size();
+    // Function to get total number of candidates for a specific round
+    int TotalNoOfCandidates(int n){
+        switch(n){
+            case 1:
+                return r1.v.size();
+            case 2:
+                return r2.v.size();
+            case 3:
+                return r3.v.size();
+            case 4:
+                return r4.v.size();
+            case 5:
+                return r5.v.size();
         }
     }
-    int Selected_From_Round(int n)
-    {
-        switch (n)
-        {
-        case 1:
-            return r2.v.size();
-        case 2:
-            return r3.v.size();
-        case 3:
-            return r4.v.size();
-        case 4:
-            return r5.v.size();
+
+    // Function to get number of candidates selected from previous round
+    int Selected_From_Round(int n){
+        switch(n){
+            case 1:
+                return r2.v.size();
+            case 2:
+                return r3.v.size();
+            case 3:
+                return r4.v.size();
+            case 4:
+                return r5.v.size();
         }
     }
-    double successRate(int n)
-    {
-        switch (n)
-        {
-        case 1:
+
+    // Function to calculate success rate for each round
+    double successRate(int n){
+        switch(n){
+            case 1:
             return r2.v.size() * 100.0 / r1.v.size();
-        case 2:
+            case 2:
             return r3.v.size() * 100.0 / r2.v.size();
-        case 3:
+            case 3:
             return r4.v.size() * 100.0 / r3.v.size();
-        case 4:
+            case 4:
             return r5.v.size() * 100.0 / r4.v.size();
         }
     }
-    double TotalSuccessRate()
-    {
-        return r5.v.size() * 100.0 / r1.v.size();
+    double TotalSuccessRate(){
+        return r5.v.size() * 100.0/r1.v.size();
     }
 };
-vector<Company> total;
+vector<Company> total; // Vector to store company-wise interview data
+
+// Function to read data from input file
 void reading(ifstream &file)
 {
 
-    int Round_no = Round_data(file);
+    int Round_no = Round_data(file); // Determine round number
     string s;
     string tempp;
 
@@ -407,32 +412,34 @@ void reading(ifstream &file)
                 switch (Round_no)
                 {
                 case 1:
-                    mpround1[c.info[5] + "-" + it.cname] = c;
+                    mpround1[c.info[5]+"-"+it.cname] = c;
                     it.r1.v.emplace_back(c);
                     break;
                 case 2:
-                    mpround2[c.info[5] + "-" + it.cname] = c;
+                    mpround2[c.info[5]+"-"+it.cname] = c;
                     it.r2.v.emplace_back(c);
                     break;
                 case 3:
-                    mpround3[c.info[5] + "-" + it.cname] = c;
+                    mpround3[c.info[5]+"-"+it.cname] = c;
                     it.r3.v.emplace_back(c);
                     break;
                 case 4:
-                    mpround4[c.info[5] + "-" + it.cname] = c;
+                    mpround4[c.info[5]+"-"+it.cname] = c;
                     it.r4.v.emplace_back(c);
                     break;
                 case 5:
-                    mpround5[c.info[5] + "-" + it.cname] = c;
+                    mpround5[c.info[5]+"-"+it.cname] = c;
                     it.r5.v.emplace_back(c);
                     break;
                 }
             }
+            
         }
     }
     Company newcompany;
     newcompany.cname = tempp;
-
+    
+    
     file.seekg(0);
     for (int i = 0; i < 2; i++)
     {
@@ -459,7 +466,8 @@ void reading(ifstream &file)
         newcompany.r5.StartDate = startDate;
         break;
     }
-
+    
+    
     file.seekg(0);
     for (int i = 0; i < 3; i++)
     {
@@ -486,7 +494,8 @@ void reading(ifstream &file)
         newcompany.r5.EndDate = endDate;
         break;
     }
-
+    
+    
     file.seekg(0);
     for (int i = 0; i < 4; i++)
     {
@@ -524,7 +533,8 @@ void reading(ifstream &file)
             s.erase(0, s.find(",") + 1);
         }
     }
-
+    
+    
     while (getline(file, s))
     {
         Candidate c;
@@ -649,106 +659,183 @@ void reading(ifstream &file)
         switch (Round_no)
         {
         case 1:
-            mpround1[c.info[5] + "-" + newcompany.cname] = c;
+            mpround1[c.info[5]+"-"+newcompany.cname] = c;
             newcompany.r1.v.emplace_back(c);
             break;
         case 2:
-            mpround2[c.info[5] + "-" + newcompany.cname] = c;
+            mpround2[c.info[5]+"-"+newcompany.cname] = c;
             newcompany.r2.v.emplace_back(c);
             break;
         case 3:
-            mpround3[c.info[5] + "-" + newcompany.cname] = c;
+            mpround3[c.info[5]+"-"+newcompany.cname] = c;
             newcompany.r3.v.emplace_back(c);
             break;
         case 4:
-            mpround4[c.info[5] + "-" + newcompany.cname] = c;
+            mpround4[c.info[5]+"-"+newcompany.cname] = c;
             newcompany.r4.v.emplace_back(c);
             break;
         case 5:
-            mpround5[c.info[5] + "-" + newcompany.cname] = c;
+            mpround5[c.info[5]+"-"+newcompany.cname] = c;
             newcompany.r5.v.emplace_back(c);
             break;
         }
     }
 }
-void GetData(string s)
-{
-    cout << "Details: " << endl;
-    cout << "Student name: " << mpround1[s].info[0] << endl;
-    cout << "Interview date: " << mpround1[s].info[1] << endl;
-    cout << "Interview status: " << mpround1[s].info[2] << endl;
-    cout << "Interview Start Time: " << mpround1[s].info[3] << endl;
-    cout << "Interview End Time: " << mpround1[s].info[4] << endl;
-    cout << "Student ID: " << mpround1[s].info[5] << endl;
-    cout << "Email: " << mpround1[s].info[6] << endl;
-    cout << "Program: " << mpround1[s].info[7] << endl;
-    cout << "Contact No.: " << mpround1[s].info[8] << endl;
-    cout << "WhatsApp No.: " << mpround1[s].info[9] << endl;
-    cout << "Alternate No.: " << mpround1[s].info[10] << endl;
-    cout << "Skype ID: " << mpround1[s].info[11] << endl;
-}
 
-void Selection_data_of_candidate(string s)
-{
-    if (mpround1[s].info[0] == "")
-    {
-        GetData(s);
+// Class that have all additional functions to solve problems.
+class Functionality{
+    public:
+
+    // Function to get all information of candidate if ID and company name is provided.
+    static void GetData(string s){
+                        cout << "Details: " << endl;
+                        cout << "Student name: " <<mpround1[s].info[0] << endl;
+                        cout << "Student ID: " <<mpround1[s].info[5] << endl;
+                        cout << "Email: " <<mpround1[s].info[6] << endl;
+                        cout << "Program: " << mpround1[s].info[7]<< endl;
+                        cout << "Contact No.: " << mpround1[s].info[8]<< endl;
+                        cout << "WhatsApp No.: " << mpround1[s].info[9]<< endl;
+                        cout << "Alternate No.: " << mpround1[s].info[10] << endl;
+                        cout << "Skype ID: " << mpround1[s].info[11] << endl;
+    }
+    
+    // Function to know status of candidate's interview for different rounds.
+    static void Selection_data_of_candidate(string s){
+    if(mpround1[s].info[0]==""){
         cout << "The name of the person with provided ID number is not found in the list of the candidates\n";
         return;
     }
-    if (mpround5[s].info[0] != "")
-    {
+    if(mpround5[s].info[0]!=""){
         cout << "This candidates selected for the placement.\n";
         return;
     }
-    if (mpround4[s].info[0] != "")
-    {
+    if(mpround4[s].info[0]!=""){
         cout << "This candidate is eliminated in HR round.\n";
         return;
     }
-    if (mpround3[s].info[0] != "")
-    {
+    if(mpround3[s].info[0]!=""){
         cout << "This candidate is eliminated in 3rd round.\n";
         return;
     }
-    if (mpround2[s].info[0] != "")
-    {
+    if(mpround2[s].info[0]!=""){
         cout << "This candidate is eliminated in 2nd round.\n";
         return;
     }
-    if (mpround1[s].info[0] != "")
-    {
+    if(mpround1[s].info[0]!=""){
         cout << "This candidate is eliminated in 1st round.\n";
         return;
     }
-}
+    }
 
-void PlacementChances()
-{
+    // Function to get the chances of placement in company, it gives sorted order of companies on basis of % chances.
+    static void PlacementChances(){
     vector<pair<double, string>> v;
-    for (auto it : total)
-    {
+    for(auto it: total){
         v.emplace_back(it.TotalSuccessRate(), it.cname);
     }
     sort(v.rbegin(), v.rend());
-    for (auto it : v)
-    {
-        cout << it.first;
+    for(auto it: v){
+        cout << it.first ;
         cout << it.second << endl;
     }
-}
+    }
+
+    // Function to calculate maximum time of interview of particular company's round.
+    static int maxtime(string s, int rno){
+        int minutes = 0;
+        string temp;
+        for(auto it: total){
+            if(it.cname==s){
+                switch(rno){
+                    case 1:
+                        for(auto pt: it.r1.v){
+                            int tempint = 0;
+                            temp = pt.info[4].substr(0, pt.info[4].find(":"));
+                            tempint += (stoi(temp)*60);
+                            temp = pt.info[4].substr(pt.info[4].find(":")+1, pt.info[4].find(","));
+                            tempint += stoi(temp);
+
+                            temp = pt.info[3].substr(0, pt.info[3].find(":"));
+                            tempint -= (stoi(temp)*60);
+                            temp = pt.info[3].substr(pt.info[3].find(":")+1, pt.info[3].find(","));
+                            tempint -= stoi(temp);
+                            if(minutes<tempint){
+                                minutes = tempint;
+                            }
+                        }
+                        break;
+                    case 2:
+                        for(auto pt: it.r2.v){
+                            int tempint = 0;
+                            temp = pt.info[4].substr(0, pt.info[4].find(":"));
+                            tempint += (stoi(temp)*60);
+                            temp = pt.info[4].substr(pt.info[4].find(":")+1, pt.info[4].find(","));
+                            tempint += stoi(temp);
+
+                            temp = pt.info[3].substr(0, pt.info[3].find(":"));
+                            tempint -= (stoi(temp)*60);
+                            temp = pt.info[3].substr(pt.info[3].find(":")+1, pt.info[3].find(","));
+                            tempint -= stoi(temp);
+                            if(minutes<tempint){
+                                minutes = tempint;
+                            }
+                        }
+                        break;
+                    case 3:
+                        for(auto pt: it.r3.v){
+                            int tempint = 0;
+                            temp = pt.info[4].substr(0, pt.info[4].find(":"));
+                            tempint += (stoi(temp)*60);
+                            temp = pt.info[4].substr(pt.info[4].find(":")+1, pt.info[4].find(","));
+                            tempint += stoi(temp);
+
+                            temp = pt.info[3].substr(0, pt.info[3].find(":"));
+                            tempint -= (stoi(temp)*60);
+                            temp = pt.info[3].substr(pt.info[3].find(":")+1, pt.info[3].find(","));
+                            tempint -= stoi(temp);
+                            if(minutes<tempint){
+                                minutes = tempint;
+                            }
+                        }
+                        break;
+                    case 4:
+                        for(auto pt: it.r4.v){
+                            int tempint = 0;
+                            temp = pt.info[4].substr(0, pt.info[4].find(":"));
+                            tempint += (stoi(temp)*60);
+                            temp = pt.info[4].substr(pt.info[4].find(":")+1, pt.info[4].find(","));
+                            tempint += stoi(temp);
+
+                            temp = pt.info[3].substr(0, pt.info[3].find(":"));
+                            tempint -= (stoi(temp)*60);
+                            temp = pt.info[3].substr(pt.info[3].find(":")+1, pt.info[3].find(","));
+                            tempint -= stoi(temp);
+                            if(minutes<tempint){
+                                minutes = tempint;
+                            }
+                        }
+                        break;
+                }
+            }
+        }
+        return minutes;
+    }
+};
 
 int main()
 {
+    #ifndef Om
+        auto starttime = chrono::high_resolution_clock::now();
+    #endif
     ifstream file1("Finalround1.csv");
     reading(file1);
-    ifstream file2("Finalselection.csv");
+    ifstream file2("FinalHR.csv");
     reading(file2);
 
-    ifstream google("Googler1.csv");
-    reading(google);
-    ifstream googlefinal("Googlefinal.csv");
-    reading(googlefinal);
+    // ifstream google("Googler1.csv");
+    // reading(google);
+    // ifstream googlefinal("Googlefinal.csv");
+    // reading(googlefinal);
     // for(auto it: total){
     //     cout << it.cname;
     //     it.r1.display();
@@ -767,8 +854,18 @@ int main()
     // }
 
     // if(mpround1["234235345-[asdhflhds]"].info[0]==""){cout << "Yes bro!!!!";}
-    Selection_data_of_candidate("202001008-[Microsoft]");
+    // Functionality::Selection_data_of_candidate("202001008-[Microsoft]");
 
-    PlacementChances();
+    // Functionality::PlacementChances();
+
+    // Functionality::avgtime("[Microsoft]", 4);
+    // cout << Functionality::maxtime("[Microsoft]", 1) << " Minutes\n";
+    Functionality::GetData("202001096-[Microsoft]");
+
+    #ifdef Om
+        auto endtime = chrono::high_resolution_clock::now();
+        auto duration = chrono::duration_cast<chrono::milliseconds>(endtime-starttime).count();
+        cout << duration << "ms";
+    #endif
     return 0;
 }
