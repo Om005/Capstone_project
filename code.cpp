@@ -820,6 +820,87 @@ class Functionality{
         }
         return minutes;
     }
+
+    // Function to calculate minimum time of interview of particular company's round.
+    static int mintime(string s, int rno){
+        int minutes = INT_MAX;
+        string temp;
+        for(auto it: total){
+            if(it.cname==s){
+                switch(rno){
+                    case 1:
+                        for(auto pt: it.r1.v){
+                            int tempint = 0;
+                            temp = pt.info[4].substr(0, pt.info[4].find(":"));
+                            tempint += (stoi(temp)*60);
+                            temp = pt.info[4].substr(pt.info[4].find(":")+1, pt.info[4].find(","));
+                            tempint += stoi(temp);
+
+                            temp = pt.info[3].substr(0, pt.info[3].find(":"));
+                            tempint -= (stoi(temp)*60);
+                            temp = pt.info[3].substr(pt.info[3].find(":")+1, pt.info[3].find(","));
+                            tempint -= stoi(temp);
+                            if(minutes>tempint){
+                                minutes = tempint;
+                            }
+                        }
+                        break;
+                    case 2:
+                        for(auto pt: it.r2.v){
+                            int tempint = 0;
+                            temp = pt.info[4].substr(0, pt.info[4].find(":"));
+                            tempint += (stoi(temp)*60);
+                            temp = pt.info[4].substr(pt.info[4].find(":")+1, pt.info[4].find(","));
+                            tempint += stoi(temp);
+
+                            temp = pt.info[3].substr(0, pt.info[3].find(":"));
+                            tempint -= (stoi(temp)*60);
+                            temp = pt.info[3].substr(pt.info[3].find(":")+1, pt.info[3].find(","));
+                            tempint -= stoi(temp);
+                            if(minutes>tempint){
+                                minutes = tempint;
+                            }
+                        }
+                        break;
+                    case 3:
+                        for(auto pt: it.r3.v){
+                            int tempint = 0;
+                            temp = pt.info[4].substr(0, pt.info[4].find(":"));
+                            tempint += (stoi(temp)*60);
+                            temp = pt.info[4].substr(pt.info[4].find(":")+1, pt.info[4].find(","));
+                            tempint += stoi(temp);
+
+                            temp = pt.info[3].substr(0, pt.info[3].find(":"));
+                            tempint -= (stoi(temp)*60);
+                            temp = pt.info[3].substr(pt.info[3].find(":")+1, pt.info[3].find(","));
+                            tempint -= stoi(temp);
+                            if(minutes>tempint){
+                                minutes = tempint;
+                            }
+                        }
+                        break;
+                    case 4:
+                        for(auto pt: it.r4.v){
+                            int tempint = 0;
+                            temp = pt.info[4].substr(0, pt.info[4].find(":"));
+                            tempint += (stoi(temp)*60);
+                            temp = pt.info[4].substr(pt.info[4].find(":")+1, pt.info[4].find(","));
+                            tempint += stoi(temp);
+
+                            temp = pt.info[3].substr(0, pt.info[3].find(":"));
+                            tempint -= (stoi(temp)*60);
+                            temp = pt.info[3].substr(pt.info[3].find(":")+1, pt.info[3].find(","));
+                            tempint -= stoi(temp);
+                            if(minutes>tempint){
+                                minutes = tempint;
+                            }
+                        }
+                        break;
+                }
+            }
+        }
+        return minutes;
+    }
 };
 
 int main()
