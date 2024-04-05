@@ -18,9 +18,6 @@ public:
     int BTechMNC{0};
     int BTechEVD{0};
     int MTechICT{0};
-    int completed{0};
-    int waiting{0};
-    int inprog{0};
     string EndDate;
     string StartDate;
     vector<Candidate> v;  // Vector to store candidate information
@@ -49,131 +46,33 @@ int Round_data(ifstream &file)
 }
 
 // Class to store information about the final round of interviews
-class Final : public Round_info{};
+class Round : public Round_info{};
 
-// Class to store information about the HR round of interviews
-class HR : public Round_info{};
-
-// Class to store information about the 3rd round of interviews
-class Round3 : public Round_info
-{
-public:
-
-    // Function to display candidate information
-    void display()
-    {
-        for (auto it : v)
-        {
-            for (int i = 0; i < 12; i++)
-            {
-                cout << it.info[i] << " ";
-            }
-            cout << endl;
-        }
-    }
-};
-
-// Class to store information about the 2nd round of interviews
-class Round2 : public Round_info
-{
-public:
-
-    // Function to display candidate information
-    void display()
-    {
-        for (auto it : v)
-        {
-            for (int i = 0; i < 12; i++)
-            {
-                cout << it.info[i] << " ";
-            }
-            cout << endl;
-        }
-    }
-};
-
-// Class to store information about the 1st round of interviews
-class Round1 : public Round_info
-{
-public:
-
-    // Function to display candidate information
-    void display()
-    {
-        for (auto it : v)
-        {
-            for (int i = 0; i < 12; i++)
-            {
-                cout << it.info[i] << " ";
-            }
-            cout << endl;
-        }
-    }
-};
 
 // Maps to store candidate information for different rounds
-unordered_map<string, Candidate> mpround1;
-unordered_map<string, Candidate> mpround2;
-unordered_map<string, Candidate> mpround3;
-unordered_map<string, Candidate> mpround4;
-unordered_map<string, Candidate> mpround5;
+unordered_map<string, Candidate> mpround[5];
 
 // Class to store company-wise interview data
 class Company
 {
 public:
     string cname; // Company name
-    Round1 r1; // Round 1 data
-    Round2 r2; // Round 2 data
-    Round3 r3; // Round 3 data
-    HR r4; // HR round data
-    Final r5; // Final round data
+    Round Rounds[5];
 
     // Function to get total number of candidates for a specific round
-    int TotalNoOfCandidates(int n){
-        switch(n){
-            case 1:
-                return r1.v.size();
-            case 2:
-                return r2.v.size();
-            case 3:
-                return r3.v.size();
-            case 4:
-                return r4.v.size();
-            case 5:
-                return r5.v.size();
+    int TotalNoOfCandidates(int rno){
+            return Rounds[rno-1].v.size();
         }
-    }
-
     // Function to get number of candidates selected from previous round
-    int Selected_From_Round(int n){
-        switch(n){
-            case 1:
-                return r2.v.size();
-            case 2:
-                return r3.v.size();
-            case 3:
-                return r4.v.size();
-            case 4:
-                return r5.v.size();
-        }
+    int Selected_From_Round(int rno){
+            return Rounds[rno].v.size();
     }
-
     // Function to calculate success rate for each round
-    double successRate(int n){
-        switch(n){
-            case 1:
-            return r2.v.size() * 100.0 / r1.v.size();
-            case 2:
-            return r3.v.size() * 100.0 / r2.v.size();
-            case 3:
-            return r4.v.size() * 100.0 / r3.v.size();
-            case 4:
-            return r5.v.size() * 100.0 / r4.v.size();
-        }
+    double successRate(int rno){
+            return Rounds[rno].v.size() * 100.0 / Rounds[rno-1].v.size();
     }
     double TotalSuccessRate(){
-        return r5.v.size() * 100.0/r1.v.size();
+        return Rounds[4].v.size() * 100.0/Rounds[0].v.size();
     }
 };
 vector<Company> total; // Vector to store company-wise interview data
@@ -208,24 +107,7 @@ void reading(ifstream &file)
             getline(file, s);
             int pos = s.find("START DATE");
             string startDate = s.substr(pos + 11, 10);
-            switch (Round_no)
-            {
-            case 1:
-                it.r1.StartDate = startDate;
-                break;
-            case 2:
-                it.r2.StartDate = startDate;
-                break;
-            case 3:
-                it.r3.StartDate = startDate;
-                break;
-            case 4:
-                it.r4.StartDate = startDate;
-                break;
-            case 5:
-                it.r5.StartDate = startDate;
-                break;
-            }
+            it.Rounds[Round_no-1].StartDate = startDate;
             file.seekg(0);
             for (int i = 0; i < 3; i++)
             {
@@ -234,24 +116,7 @@ void reading(ifstream &file)
             getline(file, s);
             pos = s.find("END DATE");
             string endDate = s.substr(pos + 9, 10);
-            switch (Round_no)
-            {
-            case 1:
-                it.r1.EndDate = endDate;
-                break;
-            case 2:
-                it.r2.EndDate = endDate;
-                break;
-            case 3:
-                it.r3.EndDate = endDate;
-                break;
-            case 4:
-                it.r4.EndDate = endDate;
-                break;
-            case 5:
-                it.r5.EndDate = endDate;
-                break;
-            }
+           it.Rounds[Round_no-1].EndDate = endDate;
             file.seekg(0);
             for (int i = 0; i < 4; i++)
             {
@@ -264,24 +129,7 @@ void reading(ifstream &file)
             }
             while (tempp[tempp.length() - 1] >= '0' && tempp[tempp.length() - 1] <= '9')
             {
-                switch (Round_no)
-                {
-                case 1:
-                    it.r1.CR.emplace_back(tempp);
-                    break;
-                case 2:
-                    it.r2.CR.emplace_back(tempp);
-                    break;
-                case 3:
-                    it.r3.CR.emplace_back(tempp);
-                    break;
-                case 4:
-                    it.r4.CR.emplace_back(tempp);
-                    break;
-                case 5:
-                    it.r5.CR.emplace_back(tempp);
-                    break;
-                }
+                it.Rounds[Round_no-1].CR.emplace_back(tempp);
                 getline(file, s);
                 for (int i = 0; i < 5; i++)
                 {
@@ -309,129 +157,30 @@ void reading(ifstream &file)
                         {
                             if (c.info[no][4] == '0')
                             {
-                                switch (Round_no)
+                                switch (c.info[no][5])
                                 {
-                                case 1:
-                                    switch (c.info[no][5])
-                                    {
-                                    case '1':
-                                        it.r1.BTechICT++;
-                                        break;
-                                    case '2':
-                                        it.r1.BTechEVD++;
-                                        break;
-                                    case '3':
-                                        it.r1.BTechMNC++;
-                                        break;
-                                    }
+                                case '1':
+                                    it.Rounds[Round_no-1].BTechICT++;
                                     break;
-                                case 2:
-                                    switch (c.info[no][5])
-                                    {
-                                    case '1':
-                                        it.r2.BTechICT++;
-                                        break;
-                                    case '2':
-                                        it.r2.BTechEVD++;
-                                        break;
-                                    case '3':
-                                        it.r2.BTechMNC++;
-                                        break;
-                                    }
+                                case '2':
+                                    it.Rounds[Round_no-1].BTechEVD++;
                                     break;
-                                case 3:
-                                    switch (c.info[no][5])
-                                    {
-                                    case '1':
-                                        it.r3.BTechICT++;
-                                        break;
-                                    case '2':
-                                        it.r3.BTechEVD++;
-                                        break;
-                                    case '3':
-                                        it.r3.BTechMNC++;
-                                        break;
-                                    }
-                                    break;
-                                case 4:
-                                    switch (c.info[no][5])
-                                    {
-                                    case '1':
-                                        it.r4.BTechICT++;
-                                        break;
-                                    case '2':
-                                        it.r4.BTechEVD++;
-                                        break;
-                                    case '3':
-                                        it.r4.BTechMNC++;
-                                        break;
-                                    }
-                                    break;
-                                case 5:
-                                    switch (c.info[no][5])
-                                    {
-                                    case '1':
-                                        it.r5.BTechICT++;
-                                        break;
-                                    case '2':
-                                        it.r5.BTechEVD++;
-                                        break;
-                                    case '3':
-                                        it.r5.BTechMNC++;
-                                        break;
-                                    }
+                                case '3':
+                                    it.Rounds[Round_no-1].BTechMNC++;
                                     break;
                                 }
                             }
                             else
                             {
-                                switch (Round_no)
-                                {
-                                case 1:
-                                    it.r1.MTechICT++;
-                                    break;
-                                case 2:
-                                    it.r2.MTechICT++;
-                                    break;
-                                case 3:
-                                    it.r3.MTechICT++;
-                                    break;
-                                case 4:
-                                    it.r4.MTechICT++;
-                                    break;
-                                case 5:
-                                    it.r5.MTechICT++;
-                                    break;
-                                }
+                                it.Rounds[Round_no-1].MTechICT++;
                             }
                         }
                     }
                     s.erase(0, ind + 1);
                     no++;
                 }
-                switch (Round_no)
-                {
-                case 1:
-                    mpround1[c.info[5]+"-"+it.cname] = c;
-                    it.r1.v.emplace_back(c);
-                    break;
-                case 2:
-                    mpround2[c.info[5]+"-"+it.cname] = c;
-                    it.r2.v.emplace_back(c);
-                    break;
-                case 3:
-                    mpround3[c.info[5]+"-"+it.cname] = c;
-                    it.r3.v.emplace_back(c);
-                    break;
-                case 4:
-                    mpround4[c.info[5]+"-"+it.cname] = c;
-                    it.r4.v.emplace_back(c);
-                    break;
-                case 5:
-                    mpround5[c.info[5]+"-"+it.cname] = c;
-                    it.r5.v.emplace_back(c);
-                    break;
-                }
+                    mpround[Round_no-1][c.info[5]+"-"+it.cname] = c;
+                    it.Rounds[Round_no-1].v.emplace_back(c);
             }
             
         }
@@ -448,24 +197,7 @@ void reading(ifstream &file)
     getline(file, s);
     int pos = s.find("START DATE");
     string startDate = s.substr(pos + 11, 10);
-    switch (Round_no)
-    {
-    case 1:
-        newcompany.r1.StartDate = startDate;
-        break;
-    case 2:
-        newcompany.r2.StartDate = startDate;
-        break;
-    case 3:
-        newcompany.r3.StartDate = startDate;
-        break;
-    case 4:
-        newcompany.r4.StartDate = startDate;
-        break;
-    case 5:
-        newcompany.r5.StartDate = startDate;
-        break;
-    }
+    newcompany.Rounds[Round_no-1].StartDate = startDate;
     
     
     file.seekg(0);
@@ -476,26 +208,7 @@ void reading(ifstream &file)
     getline(file, s);
     pos = s.find("END DATE");
     string endDate = s.substr(pos + 9, 10);
-    switch (Round_no)
-    {
-    case 1:
-        newcompany.r1.EndDate = endDate;
-        break;
-    case 2:
-        newcompany.r2.EndDate = endDate;
-        break;
-    case 3:
-        newcompany.r3.EndDate = endDate;
-        break;
-    case 4:
-        newcompany.r4.EndDate = endDate;
-        break;
-    case 5:
-        newcompany.r5.EndDate = endDate;
-        break;
-    }
-    
-    
+    newcompany.Rounds[Round_no-1].EndDate = endDate;
     file.seekg(0);
     for (int i = 0; i < 4; i++)
     {
@@ -508,24 +221,7 @@ void reading(ifstream &file)
     }
     while (tempp[tempp.length() - 1] >= '0' && tempp[tempp.length() - 1] <= '9')
     {
-        switch (Round_no)
-        {
-        case 1:
-            newcompany.r1.CR.emplace_back(tempp);
-            break;
-        case 2:
-            newcompany.r2.CR.emplace_back(tempp);
-            break;
-        case 3:
-            newcompany.r3.CR.emplace_back(tempp);
-            break;
-        case 4:
-            newcompany.r4.CR.emplace_back(tempp);
-            break;
-        case 5:
-            newcompany.r5.CR.emplace_back(tempp);
-            break;
-        }
+        newcompany.Rounds[Round_no-1].CR.emplace_back(tempp);
         getline(file, s);
         for (int i = 0; i < 5; i++)
         {
@@ -556,129 +252,30 @@ void reading(ifstream &file)
                 {
                     if (c.info[no][4] == '0')
                     {
-                        switch (Round_no)
-                        {
-                        case 1:
                             switch (c.info[no][5])
                             {
                             case '1':
-                                newcompany.r1.BTechICT++;
+                                newcompany.Rounds[Round_no-1].BTechICT++;
                                 break;
                             case '2':
-                                newcompany.r1.BTechEVD++;
+                                newcompany.Rounds[Round_no-1].BTechEVD++;
                                 break;
                             case '3':
-                                newcompany.r1.BTechMNC++;
+                                newcompany.Rounds[Round_no-1].BTechMNC++;
                                 break;
                             }
-                            break;
-                        case 2:
-                            switch (c.info[no][5])
-                            {
-                            case '1':
-                                newcompany.r2.BTechICT++;
-                                break;
-                            case '2':
-                                newcompany.r2.BTechEVD++;
-                                break;
-                            case '3':
-                                newcompany.r2.BTechMNC++;
-                                break;
-                            }
-                            break;
-                        case 3:
-                            switch (c.info[no][5])
-                            {
-                            case '1':
-                                newcompany.r3.BTechICT++;
-                                break;
-                            case '2':
-                                newcompany.r3.BTechEVD++;
-                                break;
-                            case '3':
-                                newcompany.r3.BTechMNC++;
-                                break;
-                            }
-                            break;
-                        case 4:
-                            switch (c.info[no][5])
-                            {
-                            case '1':
-                                newcompany.r4.BTechICT++;
-                                break;
-                            case '2':
-                                newcompany.r4.BTechEVD++;
-                                break;
-                            case '3':
-                                newcompany.r4.BTechMNC++;
-                                break;
-                            }
-                            break;
-                        case 5:
-                            switch (c.info[no][5])
-                            {
-                            case '1':
-                                newcompany.r5.BTechICT++;
-                                break;
-                            case '2':
-                                newcompany.r5.BTechEVD++;
-                                break;
-                            case '3':
-                                newcompany.r5.BTechMNC++;
-                                break;
-                            }
-                            break;
-                        }
                     }
                     else
                     {
-                        switch (Round_no)
-                        {
-                        case 1:
-                            newcompany.r1.MTechICT++;
-                            break;
-                        case 2:
-                            newcompany.r2.MTechICT++;
-                            break;
-                        case 3:
-                            newcompany.r3.MTechICT++;
-                            break;
-                        case 4:
-                            newcompany.r4.MTechICT++;
-                            break;
-                        case 5:
-                            newcompany.r5.MTechICT++;
-                            break;
-                        }
+                        newcompany.Rounds[Round_no-1].MTechICT++;
                     }
                 }
             }
             s.erase(0, ind + 1);
             no++;
         }
-        switch (Round_no)
-        {
-        case 1:
-            mpround1[c.info[5]+"-"+newcompany.cname] = c;
-            newcompany.r1.v.emplace_back(c);
-            break;
-        case 2:
-            mpround2[c.info[5]+"-"+newcompany.cname] = c;
-            newcompany.r2.v.emplace_back(c);
-            break;
-        case 3:
-            mpround3[c.info[5]+"-"+newcompany.cname] = c;
-            newcompany.r3.v.emplace_back(c);
-            break;
-        case 4:
-            mpround4[c.info[5]+"-"+newcompany.cname] = c;
-            newcompany.r4.v.emplace_back(c);
-            break;
-        case 5:
-            mpround5[c.info[5]+"-"+newcompany.cname] = c;
-            newcompany.r5.v.emplace_back(c);
-            break;
-        }
+        mpround[Round_no-1][c.info[5]+"-"+newcompany.cname] = c;
+        newcompany.Rounds[Round_no-1].v.emplace_back(c);
     }
 }
 
@@ -689,39 +286,66 @@ class Functionality{
     // Function to get all information of candidate if ID and company name is provided.
     static void GetData(string s){
                         cout << "Details: " << endl;
-                        cout << "Student name: " <<mpround1[s].info[0] << endl;
-                        cout << "Student ID: " <<mpround1[s].info[5] << endl;
-                        cout << "Email: " <<mpround1[s].info[6] << endl;
-                        cout << "Program: " << mpround1[s].info[7]<< endl;
-                        cout << "Contact No.: " << mpround1[s].info[8]<< endl;
-                        cout << "WhatsApp No.: " << mpround1[s].info[9]<< endl;
-                        cout << "Alternate No.: " << mpround1[s].info[10] << endl;
-                        cout << "Skype ID: " << mpround1[s].info[11] << endl;
+                        cout << "Student name: " <<mpround[0][s].info[0] << endl;
+                        cout << "Student ID: " <<mpround[0][s].info[5] << endl;
+                        cout << "Email: " <<mpround[0][s].info[6] << endl;
+                        cout << "Program: " << mpround[0][s].info[7]<< endl;
+                        cout << "Contact No.: " << mpround[0][s].info[8]<< endl;
+                        cout << "WhatsApp No.: " << mpround[0][s].info[9]<< endl;
+                        cout << "Alternate No.: " << mpround[0][s].info[10] << endl;
+                        cout << "Skype ID: " << mpround[0][s].info[11] << endl;
+    }
+
+    // Function to get all information about candidates round wise (candidate ID company name and round number should be provided)
+    static void GetData_cname_Round(string s, int rno){
+        cout << "Details: " << endl;
+        cout << "Student name: " <<mpround[rno-1][s].info[0] << endl;
+        cout << "Student ID: " <<mpround[rno-1][s].info[5] << endl;
+        cout << "Email: " <<mpround[rno-1][s].info[6] << endl;
+        cout << "Program: " << mpround[rno-1][s].info[7]<< endl;
+        cout << "Contact No.: " << mpround[rno-1][s].info[8]<< endl;
+        cout << "WhatsApp No.: " << mpround[rno-1][s].info[9]<< endl;
+        cout << "Alternate No.: " << mpround[rno-1][s].info[10] << endl;
+        cout << "Skype ID: " << mpround[rno-1][s].info[11] << endl;
+        cout << "Date of the interview is " << mpround[rno-1][s].info[1] << endl;
+        cout << "Start time of the interview is " << mpround[rno-1][s].info[3] << endl;
+        cout << "end time of the interview is " << mpround[rno-1][s].info[4] << endl;
+    }
+
+
+    //Function to know status of the candidates interview.
+    static void StatusOf(string s, int rno){
+            if(rno==4){
+                cout << "Status of the candidate's interview in " << s << " HR round is "<< mpround[3][s].info[2] << endl;
+            }
+            else{
+                cout << "Status of the candidate's interview in " << s << " round "<< rno << " is "<< mpround[rno-1][s].info[2] << endl;
+            }
     }
     
-    // Function to know status of candidate's interview for different rounds.
+    // Function to know how many rounds cleared by a specific candidate.
     static void Selection_data_of_candidate(string s){
-    if(mpround1[s].info[0]==""){
+    if(mpround[0][s].info[0]==""){
         cout << "The name of the person with provided ID number is not found in the list of the candidates\n";
         return;
     }
-    if(mpround5[s].info[0]!=""){
+    if(mpround[4][s].info[0]!=""){
         cout << "This candidates selected for the placement.\n";
         return;
     }
-    if(mpround4[s].info[0]!=""){
+    if(mpround[3][s].info[0]!=""){
         cout << "This candidate is eliminated in HR round.\n";
         return;
     }
-    if(mpround3[s].info[0]!=""){
+    if(mpround[2][s].info[0]!=""){
         cout << "This candidate is eliminated in 3rd round.\n";
         return;
     }
-    if(mpround2[s].info[0]!=""){
+    if(mpround[1][s].info[0]!=""){
         cout << "This candidate is eliminated in 2nd round.\n";
         return;
     }
-    if(mpround1[s].info[0]!=""){
+    if(mpround[0][s].info[0]!=""){
         cout << "This candidate is eliminated in 1st round.\n";
         return;
     }
@@ -746,60 +370,18 @@ class Functionality{
         long long minutes=0;
         for(auto it: total){
             if(it.cname==s){
-                switch(rno){
-                    case 1:
-                        for(auto pt: it.r1.v){
-                            temp = pt.info[4].substr(0, pt.info[4].find(":"));
-                            minutes += (stoi(temp)*60);
-                            temp = pt.info[4].substr(pt.info[4].find(":")+1, pt.info[4].find(","));
-                            minutes += stoi(temp);
+                for(auto pt: it.Rounds[rno-1].v){
+                    temp = pt.info[4].substr(0, pt.info[4].find(":"));
+                    minutes += (stoi(temp)*60);
+                    temp = pt.info[4].substr(pt.info[4].find(":")+1, pt.info[4].find(","));
+                    minutes += stoi(temp);
 
-                            temp = pt.info[3].substr(0, pt.info[3].find(":"));
-                            minutes -= (stoi(temp)*60);
-                            temp = pt.info[3].substr(pt.info[3].find(":")+1, pt.info[3].find(","));
-                            minutes -= stoi(temp);
-                        }
-                        return float(minutes)/it.TotalNoOfCandidates(1);
-                    case 2:
-                        for(auto pt: it.r2.v){
-                            temp = pt.info[4].substr(0, pt.info[4].find(":"));
-                            minutes += (stoi(temp)*60);
-                            temp = pt.info[4].substr(pt.info[4].find(":")+1, pt.info[4].find(","));
-                            minutes += stoi(temp);
-
-                            temp = pt.info[3].substr(0, pt.info[3].find(":"));
-                            minutes -= (stoi(temp)*60);
-                            temp = pt.info[3].substr(pt.info[3].find(":")+1, pt.info[3].find(","));
-                            minutes -= stoi(temp);
-                        }
-                        return float(minutes)/it.TotalNoOfCandidates(2);
-                    case 3:
-                        for(auto pt: it.r3.v){
-                            temp = pt.info[4].substr(0, pt.info[4].find(":"));
-                            minutes += (stoi(temp)*60);
-                            temp = pt.info[4].substr(pt.info[4].find(":")+1, pt.info[4].find(","));
-                            minutes += stoi(temp);
-
-                            temp = pt.info[3].substr(0, pt.info[3].find(":"));
-                            minutes -= (stoi(temp)*60);
-                            temp = pt.info[3].substr(pt.info[3].find(":")+1, pt.info[3].find(","));
-                            minutes -= stoi(temp);
-                        }
-                        return float(minutes)/it.TotalNoOfCandidates(3);
-                    case 4:
-                        for(auto pt: it.r4.v){
-                            temp = pt.info[4].substr(0, pt.info[4].find(":"));
-                            minutes += (stoi(temp)*60);
-                            temp = pt.info[4].substr(pt.info[4].find(":")+1, pt.info[4].find(","));
-                            minutes += stoi(temp);
-
-                            temp = pt.info[3].substr(0, pt.info[3].find(":"));
-                            minutes -= (stoi(temp)*60);
-                            temp = pt.info[3].substr(pt.info[3].find(":")+1, pt.info[3].find(","));
-                            minutes -= stoi(temp);
-                        }
-                        return float(minutes)/it.TotalNoOfCandidates(4);
+                    temp = pt.info[3].substr(0, pt.info[3].find(":"));
+                    minutes -= (stoi(temp)*60);
+                    temp = pt.info[3].substr(pt.info[3].find(":")+1, pt.info[3].find(","));
+                    minutes -= stoi(temp);
                 }
+                return float(minutes)/it.TotalNoOfCandidates(rno);
             }
         }
     }
@@ -810,75 +392,20 @@ class Functionality{
         string temp;
         for(auto it: total){
             if(it.cname==s){
-                switch(rno){
-                    case 1:
-                        for(auto pt: it.r1.v){
-                            int tempint = 0;
-                            temp = pt.info[4].substr(0, pt.info[4].find(":"));
-                            tempint += (stoi(temp)*60);
-                            temp = pt.info[4].substr(pt.info[4].find(":")+1, pt.info[4].find(","));
-                            tempint += stoi(temp);
+                for(auto pt: it.Rounds[rno-1].v){
+                    int tempint = 0;
+                    temp = pt.info[4].substr(0, pt.info[4].find(":"));
+                    tempint += (stoi(temp)*60);
+                    temp = pt.info[4].substr(pt.info[4].find(":")+1, pt.info[4].find(","));
+                    tempint += stoi(temp);
 
-                            temp = pt.info[3].substr(0, pt.info[3].find(":"));
-                            tempint -= (stoi(temp)*60);
-                            temp = pt.info[3].substr(pt.info[3].find(":")+1, pt.info[3].find(","));
-                            tempint -= stoi(temp);
-                            if(minutes<tempint){
-                                minutes = tempint;
-                            }
-                        }
-                        break;
-                    case 2:
-                        for(auto pt: it.r2.v){
-                            int tempint = 0;
-                            temp = pt.info[4].substr(0, pt.info[4].find(":"));
-                            tempint += (stoi(temp)*60);
-                            temp = pt.info[4].substr(pt.info[4].find(":")+1, pt.info[4].find(","));
-                            tempint += stoi(temp);
-
-                            temp = pt.info[3].substr(0, pt.info[3].find(":"));
-                            tempint -= (stoi(temp)*60);
-                            temp = pt.info[3].substr(pt.info[3].find(":")+1, pt.info[3].find(","));
-                            tempint -= stoi(temp);
-                            if(minutes<tempint){
-                                minutes = tempint;
-                            }
-                        }
-                        break;
-                    case 3:
-                        for(auto pt: it.r3.v){
-                            int tempint = 0;
-                            temp = pt.info[4].substr(0, pt.info[4].find(":"));
-                            tempint += (stoi(temp)*60);
-                            temp = pt.info[4].substr(pt.info[4].find(":")+1, pt.info[4].find(","));
-                            tempint += stoi(temp);
-
-                            temp = pt.info[3].substr(0, pt.info[3].find(":"));
-                            tempint -= (stoi(temp)*60);
-                            temp = pt.info[3].substr(pt.info[3].find(":")+1, pt.info[3].find(","));
-                            tempint -= stoi(temp);
-                            if(minutes<tempint){
-                                minutes = tempint;
-                            }
-                        }
-                        break;
-                    case 4:
-                        for(auto pt: it.r4.v){
-                            int tempint = 0;
-                            temp = pt.info[4].substr(0, pt.info[4].find(":"));
-                            tempint += (stoi(temp)*60);
-                            temp = pt.info[4].substr(pt.info[4].find(":")+1, pt.info[4].find(","));
-                            tempint += stoi(temp);
-
-                            temp = pt.info[3].substr(0, pt.info[3].find(":"));
-                            tempint -= (stoi(temp)*60);
-                            temp = pt.info[3].substr(pt.info[3].find(":")+1, pt.info[3].find(","));
-                            tempint -= stoi(temp);
-                            if(minutes<tempint){
-                                minutes = tempint;
-                            }
-                        }
-                        break;
+                    temp = pt.info[3].substr(0, pt.info[3].find(":"));
+                    tempint -= (stoi(temp)*60);
+                    temp = pt.info[3].substr(pt.info[3].find(":")+1, pt.info[3].find(","));
+                    tempint -= stoi(temp);
+                    if(minutes<tempint){
+                        minutes = tempint;
+                    }
                 }
             }
         }
@@ -891,123 +418,64 @@ class Functionality{
         string temp;
         for(auto it: total){
             if(it.cname==s){
-                switch(rno){
-                    case 1:
-                        for(auto pt: it.r1.v){
-                            int tempint = 0;
-                            temp = pt.info[4].substr(0, pt.info[4].find(":"));
-                            tempint += (stoi(temp)*60);
-                            temp = pt.info[4].substr(pt.info[4].find(":")+1, pt.info[4].find(","));
-                            tempint += stoi(temp);
+                for(auto pt: it.Rounds[rno-1].v){
+                    int tempint = 0;
+                    temp = pt.info[4].substr(0, pt.info[4].find(":"));
+                    tempint += (stoi(temp)*60);
+                    temp = pt.info[4].substr(pt.info[4].find(":")+1, pt.info[4].find(","));
+                    tempint += stoi(temp);
 
-                            temp = pt.info[3].substr(0, pt.info[3].find(":"));
-                            tempint -= (stoi(temp)*60);
-                            temp = pt.info[3].substr(pt.info[3].find(":")+1, pt.info[3].find(","));
-                            tempint -= stoi(temp);
-                            if(minutes>tempint){
-                                minutes = tempint;
-                            }
-                        }
-                        break;
-                    case 2:
-                        for(auto pt: it.r2.v){
-                            int tempint = 0;
-                            temp = pt.info[4].substr(0, pt.info[4].find(":"));
-                            tempint += (stoi(temp)*60);
-                            temp = pt.info[4].substr(pt.info[4].find(":")+1, pt.info[4].find(","));
-                            tempint += stoi(temp);
-
-                            temp = pt.info[3].substr(0, pt.info[3].find(":"));
-                            tempint -= (stoi(temp)*60);
-                            temp = pt.info[3].substr(pt.info[3].find(":")+1, pt.info[3].find(","));
-                            tempint -= stoi(temp);
-                            if(minutes>tempint){
-                                minutes = tempint;
-                            }
-                        }
-                        break;
-                    case 3:
-                        for(auto pt: it.r3.v){
-                            int tempint = 0;
-                            temp = pt.info[4].substr(0, pt.info[4].find(":"));
-                            tempint += (stoi(temp)*60);
-                            temp = pt.info[4].substr(pt.info[4].find(":")+1, pt.info[4].find(","));
-                            tempint += stoi(temp);
-
-                            temp = pt.info[3].substr(0, pt.info[3].find(":"));
-                            tempint -= (stoi(temp)*60);
-                            temp = pt.info[3].substr(pt.info[3].find(":")+1, pt.info[3].find(","));
-                            tempint -= stoi(temp);
-                            if(minutes>tempint){
-                                minutes = tempint;
-                            }
-                        }
-                        break;
-                    case 4:
-                        for(auto pt: it.r4.v){
-                            int tempint = 0;
-                            temp = pt.info[4].substr(0, pt.info[4].find(":"));
-                            tempint += (stoi(temp)*60);
-                            temp = pt.info[4].substr(pt.info[4].find(":")+1, pt.info[4].find(","));
-                            tempint += stoi(temp);
-
-                            temp = pt.info[3].substr(0, pt.info[3].find(":"));
-                            tempint -= (stoi(temp)*60);
-                            temp = pt.info[3].substr(pt.info[3].find(":")+1, pt.info[3].find(","));
-                            tempint -= stoi(temp);
-                            if(minutes>tempint){
-                                minutes = tempint;
-                            }
-                        }
-                        break;
+                    temp = pt.info[3].substr(0, pt.info[3].find(":"));
+                    tempint -= (stoi(temp)*60);
+                    temp = pt.info[3].substr(pt.info[3].find(":")+1, pt.info[3].find(","));
+                    tempint -= stoi(temp);
+                    if(minutes>tempint){
+                        minutes = tempint;
+                    }
                 }
             }
         }
         return minutes;
     }
 };
-
 int main()
 {
     #ifndef Om
         auto starttime = chrono::high_resolution_clock::now();
     #endif
-    ifstream file1("Finalround1.csv");
-    reading(file1);
-    ifstream file2("FinalHR.csv");
-    reading(file2);
+    for(int i=1;i>-1;i++){
+        int count = 1;
+        for(int j=1;j<=5;j++){
+            string filename = "company" + to_string(i) + "round" + to_string(j) + ".csv";
+            string path = "D:/C++/Capstone/Programs/filetoberead/" + filename;
+            ifstream file12(path);
+            if(file12.is_open()){
+                reading(file12);
+            }
+            else {
+                count = 0;
+                break;
+            }
+        }
+        if(count==0){break;}
+    }
 
-    // ifstream google("Googler1.csv");
-    // reading(google);
-    // ifstream googlefinal("Googlefinal.csv");
-    // reading(googlefinal);
-    // for(auto it: total){
-    //     cout << it.cname;
-    //     it.r1.display();
-    //     cout << it.r1.BTechICT<<endl;
-    //     cout << it.r1.MTechICT<<endl;
-    //     cout << it.r1.StartDate<<endl;
-    //     cout << it.r1.EndDate<<endl;
-    // }
-    // for(auto it: total){
-    //     cout << it.cname;
-    //     it.r2.display();
-    //     cout << it.r2.BTechICT<<endl;
-    //     cout << it.r2.MTechICT<<endl;
-    //     cout << it.r2.StartDate<<endl;
-    //     cout << it.r2.EndDate<<endl;
-    // }
+    ifstream google("D:/C++/Capstone/Programs/filetoberead/Googler1.csv");
+    reading(google);
+    ifstream googlefinal("D:/C++/Capstone/Programs/filetoberead/Googlefinal.csv");
+    reading(googlefinal);
 
-    // if(mpround1["234235345-[asdhflhds]"].info[0]==""){cout << "Yes bro!!!!";}
-    // Functionality::Selection_data_of_candidate("202001008-[Microsoft]");
-
-    // Functionality::PlacementChances();
-
-    // Functionality::avgtime("[Microsoft]", 4);
-    // cout << Functionality::maxtime("[Microsoft]", 1) << " Minutes\n";
     Functionality::GetData("202001096-[Microsoft]");
-
-    #ifdef Om
+    Functionality::GetData_cname_Round("202001019-[Microsoft]", 3);
+    Functionality::Selection_data_of_candidate("202001008-[Microsoft]");
+    Functionality::StatusOf("202001019-[Microsoft]", 3);
+    Functionality::Selection_data_of_candidate("202001096-[Microsoft]");
+    Functionality::PlacementChances();
+    cout << Functionality::avgtime("[Microsoft]", 4);
+    cout << Functionality::maxtime("[Microsoft]", 1) << " Minutes\n";
+    cout << Functionality::mintime("[Microsoft]", 3) << " Minutes\n";
+    
+    #ifndef Om
         auto endtime = chrono::high_resolution_clock::now();
         auto duration = chrono::duration_cast<chrono::milliseconds>(endtime-starttime).count();
         cout << duration << "ms";
