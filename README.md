@@ -37,7 +37,7 @@ Q. Finding that given candidate has reached till what round by his ID and compan
 Q. Counting the number of people belonging to different branches in given round of given company. <br>
 Q. Get round-wise information of candidate when ID and company name is given. <br>
 Q. Find candidate's interview status when company name, ID and round no. are given.<br>
-Q. Knowing how many rounds did candidate pass from his ID and company name.
+Q. Knowing how many rounds did candidate pass from his ID and company name.<br>
 Q. Finding chances of placement in company by giving sorted order of company on basis of % chances. <br>
 Q. Calculating average time of interview of particular company's round. <br>
 Q. Finding the maximum time of interview for given company's round. <br>
