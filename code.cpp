@@ -438,6 +438,7 @@ class Functionality{
         return minutes;
     }
 
+    // Function that takes student ID and finds the names of all companies in which that student has participated.
     static void findCompany(string s){
         string temp;
         for(auto it: total){
@@ -448,6 +449,7 @@ class Functionality{
         }
     }
 
+    // Function that gives % of placement rate of the college for a particular year.
     static double PlacementRate(int year){
         string temp;
         int entered{0};
