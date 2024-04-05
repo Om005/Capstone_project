@@ -437,6 +437,39 @@ class Functionality{
         }
         return minutes;
     }
+
+    static void findCompany(string s){
+        string temp;
+        for(auto it: total){
+            temp = s + "-" + it.cname;
+            if(mpround[0][temp].info[0] != ""){
+                cout << it.cname << endl;
+            }
+        }
+    }
+
+    static double PlacementRate(int year){
+        string temp;
+        int entered{0};
+        int selected{0};
+        int count = 0;
+        for(auto it: total){
+            temp = it.Rounds[0].StartDate;
+            temp = temp.erase(0, 6);
+            if(stoi(temp)==year){
+                entered += it.Rounds[0].v.size();
+                selected += it.Rounds[4].v.size();
+                count = 1;
+            }
+        }
+        if(count==1){
+            return selected*100.0/entered;
+        }
+        else{
+            cout << "This year's data is not available.\n";
+            return -1;
+        }
+    }
 };
 int main()
 {
@@ -460,11 +493,12 @@ int main()
         if(count==0){break;}
     }
 
-    ifstream google("D:/C++/Capstone/Programs/filetoberead/Googler1.csv");
+    ifstream google("Googler1.csv");
     reading(google);
-    ifstream googlefinal("D:/C++/Capstone/Programs/filetoberead/Googlefinal.csv");
+    ifstream googlefinal("Googlefinal.csv");
     reading(googlefinal);
 
+    Functionality::findCompany("202001001");
     Functionality::GetData("202001096-[Microsoft]");
     Functionality::GetData_cname_Round("202001019-[Microsoft]", 3);
     Functionality::Selection_data_of_candidate("202001008-[Microsoft]");
@@ -474,7 +508,9 @@ int main()
     cout << Functionality::avgtime("[Microsoft]", 4);
     cout << Functionality::maxtime("[Microsoft]", 1) << " Minutes\n";
     cout << Functionality::mintime("[Microsoft]", 3) << " Minutes\n";
-    
+
+    cout << Functionality::PlacementRate(2024) << endl;
+
     #ifndef Om
         auto endtime = chrono::high_resolution_clock::now();
         auto duration = chrono::duration_cast<chrono::milliseconds>(endtime-starttime).count();
