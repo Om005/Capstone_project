@@ -641,7 +641,7 @@ class Functionality{
         cout << "-------------------------------\n";
     }
 
-     // Getting total no. of BTech ICT candidates from given year, company and round mo.
+    // Getting total no. of BTech ICT candidates from given year, company and round mo.
     static void GetICT(string s, int yr, int rno){
         for(auto it: total){
             if(it.cname==s && it.year==to_string(yr)){
@@ -655,6 +655,24 @@ class Functionality{
         for(auto it: total){
             if(it.cname==s && it.year==to_string(yr)){
                 cout << "Total number of BTech EVD candidates in " << s << " company Round " << rno << " year " << yr << " is " << it.Rounds[rno-1].BTechEVD << endl;
+                cout << "-------------------------------\n";
+            }
+        }
+    }
+    // Getting total no. of BTech MnC candidates from given year, company and round mo.
+    static void GetMnC(string s, int yr, int rno){
+        for(auto it: total){
+            if(it.cname==s && it.year==to_string(yr)){
+                cout << "Total number of BTech EVD candidates in " << s << " company Round " << rno << " year " << yr << " is " << it.Rounds[rno-1].BTechEVD<< endl;
+                cout << "-------------------------------\n";
+            }
+        }
+    }
+    // Getting total no. of MTech ICT candidates from given year, company and round mo.
+    static void GeMTech(string s, int yr, int rno){
+        for(auto it: total){
+            if(it.cname==s && it.year==to_string(yr)){
+                cout << "Total number of MTech ICT candidates in " << s << " company Round " << rno << " year " << yr << " is " << it.Rounds[rno-1].MTechICT<< endl;
                 cout << "-------------------------------\n";
             }
         }
@@ -682,6 +700,8 @@ int main()
     Functionality::PlacementChances(2024);
     Functionality::GetICT("[Microsoft]", 2024, 3);
     Functionality::GetEVD("[Microsoft]", 2024, 3);
+    Functionality::GetMnC("[Microsoft]", 2024, 3);
+    Functionality::GeMTech("[Microsoft]", 2024, 3);
     Functionality::avgtime("[Microsoft]", 2, 2024);
     Functionality::maxtime("[Microsoft]", 2, 2024);
     Functionality::mintime("[Microsoft]", 2, 2024);
