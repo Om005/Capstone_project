@@ -186,3 +186,5 @@ Arrays:<br>
 → In our problem, instead of creating 5 different objects of maps we have used an array of maps, so we can avoid a lot of switch cases. This reduced many lines from our code and increased readability of our program. <br>
 
 Screenshots of output file, video of output, Documentation file, output file, input files are also uploaded in this repository. <br>
+
+→ Here tasks.json is for writing whole output in output.txt instead of console (Note that, here when we use this method we have to set command prompt as default terminal).<br>
