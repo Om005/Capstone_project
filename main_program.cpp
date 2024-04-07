@@ -722,7 +722,6 @@ class Functionality{
                             Hackathons.emplace_back(newnew);
                         }
                         break;
-
                     case 9:
                         newnew = temp.substr(0, temp.find(","));
                         CPIs += stoi(newnew);
@@ -731,6 +730,33 @@ class Functionality{
                 temp.erase(0, temp.find(",")+1);
             }
         }
+        cout << "To get placed in " << s << " company, you should do: \n";
+        cout << "Average total " << totalLeetcodeQues/no_of_candidates << " leetcodes questions.\n";
+        cout << "In this: \n";
+        cout << "Average " << easy/no_of_candidates << " easy questions, " << medium/no_of_candidates << " medium quesions and " << hard/no_of_candidates << " hard questions.\n"; 
+        cout << "Average " << TotalNoofProj/no_of_candidates << " projects.\n";
+        cout << "You can do projects like ";
+        int x = Projects.size();
+        srand(time(NULL));
+        for(int i=0;i<4;i++){
+            int ind = rand() % x;
+            cout << Projects[ind] << ", ";
+        }
+        int ind = rand() % x;
+        cout << Projects[ind] << " etc...\n\n";
+
+        cout << "You should attend around " << TotalNoofHack/no_of_candidates << " Hackathons.\n";
+        cout << "You can attend hackthons like ";
+        x = Hackathons.size();
+        for(int i=0;i<4;i++){
+            int ind = rand() % x;
+            cout << Hackathons[ind] << ", ";
+        }
+        ind = rand() % x;
+        cout << Hackathons[ind] << " etc...\n\n";
+
+        cout << "And you need around " << CPIs/no_of_candidates << " CPI!\n";
+        cout << "-------------------------------\n";
     }
     // Getting total no. of BTech ICT candidates from given year, company and round mo.
     static void GetICT(string s, int yr, int rno){
@@ -793,9 +819,9 @@ int main()
     Functionality::GetEVD("[Microsoft]", 2024, 3);
     Functionality::GetMnC("[Microsoft]", 2024, 3);
     Functionality::GeMTech("[Microsoft]", 2024, 3);
-    Functionality::avgtime("[Microsoft]", 2, 2024);
-    Functionality::maxtime("[Microsoft]", 2, 2024);
-    Functionality::mintime("[Microsoft]", 2, 2024);
+    Functionality::avgtime("[Google]", 1, 2024);
+    Functionality::maxtime("[Google]", 1, 2024);
+    Functionality::mintime("[Google]", 1, 2024);
     Functionality::trend_of("[Microsoft]",2024,2024);
     Functionality::trend_of("[Google]",2024,2024);
     Functionality::Trajectory("Google");
