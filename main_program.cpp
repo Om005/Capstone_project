@@ -641,6 +641,97 @@ class Functionality{
         cout << "-------------------------------\n";
     }
 
+    /*Finding the trajectory for a student to get placed. (Finding the best possible way from previous years data, i.e. if the student follows that path, he must be placed. Students will be suggested some path to follow for placement. For example how many Average (LeetCode questions (Easy, Medium, Hard), How many projects, CPI, Hackathons) should a student do to get placed in particular company, we’ll also suggest in what projects and in which hackathon student should participate, from additional given data of previously placed students.)*/
+    static void Trajectory(string s){
+        ifstream file("D:/C++/Capstone/Programs/Trejactory/"+s+".csv");
+        if(!file.is_open()){
+            cerr << "File for this company not found!!\n";
+            return;
+        }
+        int no_of_candidates = 0;
+        string temp;
+        getline(file, temp);
+        while(getline(file, temp)){
+            no_of_candidates++;
+        }
+        file.close();
+
+        ifstream file1("D:/C++/Capstone/Programs/Trejactory/"+s+".csv");
+        getline(file1, temp);
+        long long totalLeetcodeQues = 0, easy = 0, medium = 0, hard = 0;
+        long long TotalNoofProj = 0, TotalNoofHack = 0;
+        vector<string> Projects;
+        vector<string> Hackathons;
+        double CPIs = 0;
+
+        string newnew;
+        while(getline(file1, temp)){
+            for(int i=0;i<10;i++){
+                switch(i){
+                    case 0:
+                        newnew = temp.substr(0, temp.find(","));
+                        break;
+                    case 1:
+                        newnew = temp.substr(0, temp.find(","));
+                        totalLeetcodeQues += stoi(newnew);
+                        break;
+                    case 2:
+                        newnew = temp.substr(0, temp.find(","));
+                        easy += stoi(newnew);
+                        break;
+                    case 3:
+                        newnew = temp.substr(0, temp.find(","));
+                        medium += stoi(newnew);
+                        break;
+                    case 4:
+                        newnew = temp.substr(0, temp.find(","));
+                        hard += stoi(newnew);
+                        break;
+                    case 5:
+                        newnew = temp.substr(0, temp.find(","));
+                        TotalNoofProj += stoi(newnew);
+                        break;
+                    case 6:
+                        newnew = temp.substr(0, temp.find(","));
+                        while(newnew.find("|")!=string::npos){
+                            int po=newnew.find("|");
+                            if((find(Projects.begin(), Projects.end(), newnew.substr(0, po)))==Projects.end()){
+                                Projects.emplace_back(newnew.substr(0, po));
+                            }
+                                newnew.erase(0, po+1);
+                        }
+                        if(find(Projects.begin(), Projects.end(), newnew)==(Projects.end())){
+                            Projects.emplace_back(newnew);
+                        }
+                        break;
+                    case 7:
+                        newnew = temp.substr(0, temp.find(","));
+                        TotalNoofHack += stoi(newnew);
+                        break;
+                    case 8: 
+                        // newnew = temp.substr(0, temp.find(","));
+                        newnew = temp.substr(0, temp.find(","));
+                        while(newnew.find("|")!=string::npos){
+                            int lo=newnew.find("|");
+                            if((find(Hackathons.begin(), Hackathons.end(), newnew.substr(0, lo)))==Hackathons.end()){
+                                Hackathons.emplace_back(newnew.substr(0, lo));
+                            }
+                                newnew.erase(0, lo+1);
+                        }
+                        if(find(Hackathons.begin(), Hackathons.end(), newnew)==(Hackathons.end())){
+                            Hackathons.emplace_back(newnew);
+                        }
+                        break;
+
+                    case 9:
+                        newnew = temp.substr(0, temp.find(","));
+                        CPIs += stoi(newnew);
+                        break;
+                }
+                temp.erase(0, temp.find(",")+1);
+            }
+        }
+    }
     // Getting total no. of BTech ICT candidates from given year, company and round mo.
     static void GetICT(string s, int yr, int rno){
         for(auto it: total){
@@ -707,6 +798,7 @@ int main()
     Functionality::mintime("[Microsoft]", 2, 2024);
     Functionality::trend_of("[Microsoft]",2024,2024);
     Functionality::trend_of("[Google]",2024,2024);
+    Functionality::Trajectory("Google");
     Functionality::PlacementRate(2024);
 
     cout << "Total time of the program is: ";
