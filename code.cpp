@@ -1,4 +1,5 @@
 #include <bits/stdc++.h> // Include necessary header file
+#include <cstdlib>
 using namespace std;
 
 
@@ -6,6 +7,7 @@ using namespace std;
 class Candidate
 {
 public:
+    //*************************
     string info[12];
 };
 
@@ -56,6 +58,7 @@ unordered_map<string, Candidate> mpround[5];
 class Company
 {
 public:
+    string year;
     string cname; // Company name
     Round Rounds[5];
 
@@ -95,10 +98,26 @@ void reading(ifstream &file)
         tempp = s.substr(0, s.find(","));
         s.erase(0, s.find(",") + 1);
     }
+    //
+    file.seekg(0);
+            for (int i = 0; i < 2; i++)
+            {
+                getline(file, s);
+            }
+            getline(file, s);
+            int lose = s.find("START DATE");
+            string startYear = s.substr(lose + 17, 4);
+    //
+    
     for (auto &it : total)
     {
         if (it.cname == tempp)
         {
+
+            string yr = it.year;
+            if(startYear!=yr){
+                continue;
+            }
             file.seekg(0);
             for (int i = 0; i < 2; i++)
             {
@@ -116,7 +135,7 @@ void reading(ifstream &file)
             getline(file, s);
             pos = s.find("END DATE");
             string endDate = s.substr(pos + 9, 10);
-           it.Rounds[Round_no-1].EndDate = endDate;
+            it.Rounds[Round_no-1].EndDate = endDate;
             file.seekg(0);
             for (int i = 0; i < 4; i++)
             {
@@ -179,7 +198,7 @@ void reading(ifstream &file)
                     s.erase(0, ind + 1);
                     no++;
                 }
-                    mpround[Round_no-1][c.info[5]+"-"+it.cname] = c;
+                    mpround[Round_no-1][c.info[5]+"-"+it.cname+"-"+startYear] = c;
                     it.Rounds[Round_no-1].v.emplace_back(c);
             }
             
@@ -187,7 +206,7 @@ void reading(ifstream &file)
     }
     Company newcompany;
     newcompany.cname = tempp;
-    
+    newcompany.year = startYear;
     
     file.seekg(0);
     for (int i = 0; i < 2; i++)
@@ -274,7 +293,7 @@ void reading(ifstream &file)
             s.erase(0, ind + 1);
             no++;
         }
-        mpround[Round_no-1][c.info[5]+"-"+newcompany.cname] = c;
+        mpround[Round_no-1][c.info[5]+"-"+newcompany.cname+"-"+startYear] = c;
         newcompany.Rounds[Round_no-1].v.emplace_back(c);
     }
 }
@@ -285,6 +304,10 @@ class Functionality{
 
     // Function to get all information of candidate if ID and company name is provided.
     static void GetData(string s){
+                        if(mpround[0][s].info[0]==""){
+                            cerr << "Something is wrong! Maybe file not found or you have provided wrong details!\n";
+                            return;
+                        }
                         cout << "Details: " << endl;
                         cout << "Student name: " <<mpround[0][s].info[0] << endl;
                         cout << "Student ID: " <<mpround[0][s].info[5] << endl;
@@ -298,6 +321,10 @@ class Functionality{
 
     // Function to get all information about candidates round wise (candidate ID company name and round number should be provided)
     static void GetData_cname_Round(string s, int rno){
+        if(mpround[rno-1][s].info[0]==""){
+            cerr << "Something is wrong! Maybe file not found or you have provided wrong details!\n";
+            return;
+        }
         cout << "Details: " << endl;
         cout << "Student name: " <<mpround[rno-1][s].info[0] << endl;
         cout << "Student ID: " <<mpround[rno-1][s].info[5] << endl;
@@ -315,6 +342,10 @@ class Functionality{
 
     //Function to know status of the candidates interview.
     static void StatusOf(string s, int rno){
+            if(mpround[rno-1][s].info[0]==""){
+                cerr << "Something is wrong! Maybe file not found or you have provided wrong details!\n";
+                return;
+            }
             if(rno==4){
                 cout << "Status of the candidate's interview in " << s << " HR round is "<< mpround[3][s].info[2] << endl;
             }
@@ -326,7 +357,7 @@ class Functionality{
     // Function to know how many rounds cleared by a specific candidate.
     static void Selection_data_of_candidate(string s){
     if(mpround[0][s].info[0]==""){
-        cout << "The name of the person with provided ID number is not found in the list of the candidates\n";
+        cout << "The name of the person with provided ID number is not found in the list of the candidates!!\n";
         return;
     }
     if(mpround[4][s].info[0]!=""){
@@ -352,24 +383,28 @@ class Functionality{
     }
 
     // Function to get the chances of placement in company, it gives sorted order of companies on basis of % chances.
-    static void PlacementChances(){
-    vector<pair<double, string>> v;
-    for(auto it: total){
-        v.emplace_back(it.TotalSuccessRate(), it.cname);
-    }
-    sort(v.rbegin(), v.rend());
-    for(auto it: v){
-        cout << it.first ;
-        cout << it.second << endl;
-    }
+    static void PlacementChances(int yr){
+        vector<pair<double, string>> v;
+        for(auto it: total){
+            string y = it.year;
+            if(y==to_string(yr)){ 
+                v.emplace_back(it.TotalSuccessRate(), it.cname);
+            }
+        }
+        sort(v.rbegin(), v.rend());
+        for(auto it: v){
+            cout << it.first << "% " ;
+            cout << it.second << endl;
+        }
     }
 
     // Function to get average time of interview of particular company's round
-    static double avgtime(string s, int rno){
+    static double avgtime(string s, int rno, int yr){
         string temp;
         long long minutes=0;
         for(auto it: total){
-            if(it.cname==s){
+            string y = it.year;
+            if(it.cname==s && y==to_string(yr)){
                 for(auto pt: it.Rounds[rno-1].v){
                     temp = pt.info[4].substr(0, pt.info[4].find(":"));
                     minutes += (stoi(temp)*60);
@@ -387,11 +422,12 @@ class Functionality{
     }
 
     // Function to calculate maximum time of interview of particular company's round.
-    static int maxtime(string s, int rno){
+    static int maxtime(string s, int rno, int yr){
         int minutes = 0;
         string temp;
         for(auto it: total){
-            if(it.cname==s){
+            string y = it.year;
+            if(it.cname==s && y==to_string(yr)){
                 for(auto pt: it.Rounds[rno-1].v){
                     int tempint = 0;
                     temp = pt.info[4].substr(0, pt.info[4].find(":"));
@@ -413,11 +449,12 @@ class Functionality{
     }
 
     // Function to calculate minimum time of interview of particular company's round.
-    static int mintime(string s, int rno){
+    static int mintime(string s, int rno, int yr){
         int minutes = INT_MAX;
         string temp;
         for(auto it: total){
-            if(it.cname==s){
+            string y = it.year;
+            if(it.cname==s && y==to_string(yr)){
                 for(auto pt: it.Rounds[rno-1].v){
                     int tempint = 0;
                     temp = pt.info[4].substr(0, pt.info[4].find(":"));
@@ -439,26 +476,25 @@ class Functionality{
     }
 
     // Function that takes student ID and finds the names of all companies in which that student has participated.
-    static void findCompany(string s){
+    static void findCompany(string s, int yr){
         string temp;
         for(auto it: total){
-            temp = s + "-" + it.cname;
-            if(mpround[0][temp].info[0] != ""){
-                cout << it.cname << endl;
+            if(it.year==to_string(yr)){
+                temp = s + "-" + it.cname + "-" + to_string(yr);
+                if(mpround[0][temp].info[0] != ""){
+                    cout << it.cname << endl;
+                }
             }
         }
     }
 
     // Function that gives % of placement rate of the college for a particular year.
     static double PlacementRate(int year){
-        string temp;
         int entered{0};
         int selected{0};
         int count = 0;
         for(auto it: total){
-            temp = it.Rounds[0].StartDate;
-            temp = temp.erase(0, 6);
-            if(stoi(temp)==year){
+            if(it.year==to_string(year)){
                 entered += it.Rounds[0].v.size();
                 selected += it.Rounds[4].v.size();
                 count = 1;
@@ -472,48 +508,168 @@ class Functionality{
             return -1;
         }
     }
+
+    //Finding trend of placement of the given company by using previous years data. 
+    //(This trend will be program-wise and branch-wise also. If a user enters from year & to year, 
+    //we will give the trend of that particular company for that time period.)
+    static void trend_of(string cn, int y1, int y2){
+        
+        double temp;
+        double Bt_succ1,Mt_succ1,Bt_succ2,Mt_succ2;
+        vector<pair<double, string>> b(3);
+        int x,y=0;
+        double b1,b2,b3,b4,b5,b6;
+        for(auto it: total){
+            for(int i=y1;i<=y2;i++){
+                if(it.cname==cn && it.year==to_string(i)){
+                    if(i==y1){
+                        cout << "Total analysis: " << endl;
+                        cout << "Year: " << i << endl;
+                        cout << "Company: " << cn << endl;
+                        cout << "Total no. of candidates participated: " << it.TotalNoOfCandidates(1) << endl;
+                        cout << "Total no. of selected candidates: " << it.TotalNoOfCandidates(5) << endl;
+                        temp=it.TotalSuccessRate();
+                        cout << "Total success rate: " << temp << "%" << endl << endl;
+                        //***************
+                        cout << "Program-wise analysis: " << endl;
+                        x=it.Rounds[0].BTechEVD + it.Rounds[0].BTechICT + it.Rounds[0].BTechMNC;
+                        cout << "No. of BTech candidates: " << x << endl;
+                        y=it.Rounds[4].BTechEVD + it.Rounds[4].BTechICT + it.Rounds[4].BTechMNC;
+                        cout << "No. of selected BTech candidates: " << y << endl;
+                        Bt_succ1 = y*100.0/x;
+                        cout << "BTech success rate: " << Bt_succ1 << "%" << endl;
+                        x=it.Rounds[0].MTechICT;
+                        cout << "No. of MTech candidates: " << x << endl;
+                        y=it.Rounds[4].MTechICT;
+                        cout << "No. of selected MTech candidates: " << y << endl;
+                        Mt_succ1=y*100.0/x;
+                        cout << "MTech success rate: " << Mt_succ1 << "%" << endl;
+                        cout << "In BTech vs MTech, this year" << ((Bt_succ1>Mt_succ1)?" BTech " : " MTech ") << "was more successful." << endl << endl;  
+                        //**************
+                        cout << "Branch-wise analysis: " << endl;
+                        cout << "BTech ICT: " << endl;
+                        cout << "No. of BTech ICT candidates: " << it.Rounds[0].BTechICT << endl;
+                        cout << "No. of BTech ICT candidates selected: " << it.Rounds[4].BTechICT << endl;
+                        
+                        b1=(it.Rounds[4].BTechICT*100.0)/(it.Rounds[0].BTechICT);
+                        cout << "BTech ICT success rate: " << b1 << "%" << endl;
+
+                        cout << "BTech MnC: " << endl;
+                        cout << "No. of BTech MnC candidates: " << it.Rounds[0].BTechMNC << endl;
+                        cout << "No. of BTech MnC candidates selected: " << it.Rounds[4].BTechMNC << endl;
+                        b2=(it.Rounds[4].BTechMNC*100.0)/(it.Rounds[0].BTechMNC);
+                        cout << "BTech MnC success rate: " << b2 << "%" << endl;
+
+                        cout << "BTech EVD: " << endl;
+                        cout << "No. of BTech EVD candidates: " << it.Rounds[0].BTechEVD << endl;
+                        cout << "No. of BTech EVD candidates selected: " << it.Rounds[4].BTechEVD << endl;
+                        b3=(it.Rounds[4].BTechEVD*100.0)/(it.Rounds[0].BTechEVD);
+                        cout << "BTech EVD success rate: " << b3 << "%" << endl;
+                        b[0] = {b1, "BTech ICT"};
+                        b[1] = {b2, "BTech MnC"};
+                        b[2] = {b3, "BTech EVD"};
+                        sort(b.rbegin(), b.rend());
+                        cout << "BTech ICT vs MnC vs EVD, this year: " << endl;
+                        cout << "1. " << b[0].second << endl << "2. " << b[1].second << endl << "3. " << b[2].second << endl << endl;
+                    }
+                    else {
+                        cout << "Total analysis: " << endl;
+                        cout << "Year: " << i << endl;
+                        cout << "Company: " << cn << endl;
+                        cout << "Total no. of candidates participated: " << it.TotalNoOfCandidates(1) << endl;
+                        cout << "Total no. of selected candidates: " << it.TotalNoOfCandidates(5) << endl;
+                        cout << "Total success rate: " << it.TotalSuccessRate() << "%" << endl;
+                        cout << "Increament in total success rate: " << it.TotalSuccessRate()-temp << "%" << endl << endl;
+                        //***************
+                        cout << "Program-wise analysis: " << endl;
+                        x=it.Rounds[0].BTechEVD + it.Rounds[0].BTechICT + it.Rounds[0].BTechMNC;
+                        cout << "No. of BTech candidates: " << x << endl;
+                        y=it.Rounds[4].BTechEVD + it.Rounds[4].BTechICT + it.Rounds[4].BTechMNC;
+                        cout << "No. of selected BTech candidates: " << y << endl;
+                        Bt_succ2 = y*100.0/x;
+                        cout << "BTech success rate: " << Bt_succ2 << "%" << endl;
+                        cout << "Increament in BTech success rate: " << Bt_succ2-Bt_succ1 << endl;
+                        x=it.Rounds[0].MTechICT;
+                        cout << "No. of MTech candidates: " << x << endl;
+                        y=it.Rounds[4].MTechICT;
+                        cout << "No. of selected MTech candidates: " << y << endl;
+                        Mt_succ2 = y*100.0/x;
+                        cout << "MTech success rate: " << Mt_succ2 << "%" << endl;
+                        cout << "Increament in MTech success rate: " << Mt_succ2-Mt_succ1 << "%" << endl;
+                        cout << "In BTech vs MTech, this year" << ((Bt_succ2>Mt_succ2)?" BTech " : " MTech ") << "was more successful." << endl << endl;  
+                        //**************
+                        cout << "Branch-wise analysis: " << endl;
+                        cout << "BTech ICT: " << endl;
+                        cout << "No. of BTech ICT candidates: " << it.Rounds[0].BTechICT << endl;
+                        cout << "No. of BTech ICT candidates selected: " << it.Rounds[4].BTechICT << endl;
+                        
+                        b4=(it.Rounds[4].BTechICT*100.0)/(it.Rounds[0].BTechICT);
+                        cout << "BTech ICT success rate: " << b4 << "%" << endl;
+                        cout << "Increament in BTech ICT success rate: " << b4-b1 << "%" << endl;
+                        cout << "BTech MnC: " << endl;
+                        cout << "No. of BTech MnC candidates: " << it.Rounds[0].BTechMNC << endl;
+                        cout << "No. of BTech MnC candidates selected: " << it.Rounds[4].BTechMNC << endl;
+                        b5=(it.Rounds[4].BTechMNC*100.0)/(it.Rounds[0].BTechMNC);
+                        cout << "BTech MnC success rate: " << b5 << "%" << endl;
+                        cout << "Increament in BTech MnC success rate: " << b5-b2 << "%" << endl;
+                        cout << "BTech EVD: " << endl;
+                        cout << "No. of BTech EVD candidates: " << it.Rounds[0].BTechEVD << endl;
+                        cout << "No. of BTech EVD candidates selected: " << it.Rounds[4].BTechEVD << endl;
+                        b6=(it.Rounds[4].BTechEVD*100.0)/(it.Rounds[0].BTechEVD);
+                        cout << "BTech EVD success rate: " << b6 << "%" << endl;
+                        cout << "Increament in BTech EVD success rate: " << b6-b3 << "%" << endl;
+                        b[0] = {b4, "BTech ICT"};
+                        b[1] = {b5, "BTech MnC"};
+                        b[2] = {b6, "BTech EVD"};
+                        sort(b.rbegin(), b.rend());
+                        cout << "BTech ICT vs MnC vs EVD, this year: " << endl;
+                        cout << "1. " << b[0].second << endl << "2. " << b[1].second << endl << "3. " << b[2].second << endl << endl;
+                    }
+                    
+                }
+            }
+        }
+    }
 };
 int main()
-{
+{   
+    // int x=0;
+    system("python new.py");
     #ifndef Om
         auto starttime = chrono::high_resolution_clock::now();
     #endif
-    for(int i=1;i>-1;i++){
-        int count = 1;
-        for(int j=1;j<=5;j++){
-            string filename = "company" + to_string(i) + "round" + to_string(j) + ".csv";
-            string path = "D:/C++/Capstone/Programs/filetoberead/" + filename;
-            ifstream file12(path);
-            if(file12.is_open()){
-                reading(file12);
-            }
-            else {
-                count = 0;
-                break;
-            }
-        }
-        if(count==0){break;}
+    ifstream inputfile("fnames.txt");
+    string ffname;
+    while(getline(inputfile, ffname)){
+        ifstream file("D:/C++/Capstone/Programs/filetoberead/selfmadefiles/"+ffname);
+        reading(file);
     }
 
-    ifstream google("Googler1.csv");
-    reading(google);
-    ifstream googlefinal("Googlefinal.csv");
-    reading(googlefinal);
+    // ifstream google("Googler1.csv");
+    // reading(google);
+    // ifstream googlefinal("Googlefinal.csv");
+    // reading(googlefinal);
 
-    Functionality::findCompany("202001001");
-    Functionality::GetData("202001096-[Microsoft]");
-    Functionality::GetData_cname_Round("202001019-[Microsoft]", 3);
-    Functionality::Selection_data_of_candidate("202001008-[Microsoft]");
-    Functionality::StatusOf("202001019-[Microsoft]", 3);
-    Functionality::Selection_data_of_candidate("202001096-[Microsoft]");
-    Functionality::PlacementChances();
-    cout << Functionality::avgtime("[Microsoft]", 4);
-    cout << Functionality::maxtime("[Microsoft]", 1) << " Minutes\n";
-    cout << Functionality::mintime("[Microsoft]", 3) << " Minutes\n";
+    // Functionality::findCompany("202001001", 2023);
+    // Functionality::GetData("202001096-[Microsoft]-2024");
+    // Functionality::GetData_cname_Round("202001017-[Microsoft]-2024", 5);
+    // Functionality::Selection_data_of_candidate("202001008-[Microsoft]");
+    // Functionality::StatusOf("202001019-[Microsoft]", 3);
+    // Functionality::Selection_data_of_candidate("202001096-[Microsoft]");
+    Functionality::PlacementChances(2024);
+    // cout << total.size();
+    // for(auto it: total){
+    //     cout << it.Rounds[0].BTechICT << endl;
+    // }
+    // cout << Functionality::avgtime("[Microsoft]", 2, 2023) << "minuts" << endl;
+    // cout << Functionality::maxtime("[Microsoft]", 1, 2023) << " Minutes\n";
+    // cout << Functionality::mintime("[Microsoft]", 1, 2023) << " Minutes\n";
+    Functionality::trend_of("[Microsoft]",2024,2024);
+    Functionality::trend_of("[Google]",2024,2024);
 
-    cout << Functionality::PlacementRate(2024) << endl;
+    // cout << Functionality::PlacementRate(2023) << endl;
 
-    #ifndef Om
+    #ifdef Om
         auto endtime = chrono::high_resolution_clock::now();
         auto duration = chrono::duration_cast<chrono::milliseconds>(endtime-starttime).count();
         cout << duration << "ms";
